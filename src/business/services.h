@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"

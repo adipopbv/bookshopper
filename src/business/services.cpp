@@ -23,9 +23,10 @@ std::vector<Book> BookstoreService::GetBooks() const
 void BookstoreService::AddBookToRepo(const std::string &title, const std::string &author, const std::string &genre, const int &releaseYear)
 {
 	Book book = Book(title, author, genre, releaseYear);
-	for (int i = 0; i < static_cast<int>(this->getBooksRepo().size()); i++)
-		if (this->getBooksRepo()[i] == book)
+	std::for_each(this->booksRepo.begin(), this->booksRepo.end(), [&book](Book currentBook){ 
+		if (currentBook == book)
 			throw DuplicateError("book already in repo\n");
+	});
 	std::vector<Book> newRepo = this->getBooksRepo();
 	newRepo.push_back(book);
 	this->setBooksRepo(newRepo); // adding a new book to the end of the repo

@@ -23,11 +23,10 @@ void BookstoreClient::PrintBook(Book const book) const
 void BookstoreClient::ListAllBooks() const
 {
 	std::vector<Book> books = this->getBookstoreService().GetBooks();
-	for (int i = 0; i < static_cast<int>(books.size()); i++)
-	{
+	std::for_each(books.begin(), books.end(), [this](Book book){
 		this->getIO().PrintString("──────────\n");
-		this->PrintBook(books[i]);
-	}
+		this->PrintBook(book);
+	});
 	this->getIO().PrintString("──────────\n\n");
 }
 
@@ -123,11 +122,10 @@ void BookstoreClient::FilterBooks()
 			return;
 			break;
 	}
-	for (int i = 0; i < static_cast<int>(filteredBooks.size()); i++)
-	{
+	std::for_each(filteredBooks.begin(), filteredBooks.end(), [this](Book filteredBook){
 		this->getIO().PrintString("──────────\n");
-		this->PrintBook(filteredBooks[i]);
-	}
+		this->PrintBook(filteredBook);
+	});
 	this->getIO().PrintString("──────────\n\n");
 }
 
@@ -171,7 +169,6 @@ void BookstoreClient::SortBooks()
 void BookstoreClient::ExitApplication() const
 {
 	this->getIO().PrintString("»Exiting application...\n\n");
-	//this->getBookstoreService().getBooksRepo().FreeRepo();
 }
 
 void BookstoreClient::RunApplication()

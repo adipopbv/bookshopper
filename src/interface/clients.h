@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "../business/services.h"
 #include "../infrastructure/repos.h"
