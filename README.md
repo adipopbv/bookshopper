@@ -2,6 +2,8 @@
 
 ## Table of Contents
 
+<img src=".github/pictures/bookshopper-menu-main.png" align="right" height="180px">
+
 - [Details](#details)
 - [Get the app](#get-the-app)
 	- [Downloading](#-downloading-)
