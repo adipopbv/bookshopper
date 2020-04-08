@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"
@@ -10,22 +11,22 @@ class BookstoreService
 {
 	private:
 		/// The books repository
-		Repo<Book> booksRepo = Repo<Book>();
+		std::vector<Book> booksRepo = std::vector<Book>();
 
 	public:
 		/// Library service constructor
-		BookstoreService(const Repo<Book> &booksRepo = Repo<Book>());
+		BookstoreService(const std::vector<Book> &booksRepo = std::vector<Book>());
 
 		/// Library service destructor
 		~BookstoreService();
 
 		/// Books repository getter
-		Repo<Book> getBooksRepo() const { return this->booksRepo; }
+		std::vector<Book> getBooksRepo() const { return this->booksRepo; }
 		/// Books repository setter
-		void setBooksRepo(Repo<Book> const &value) { this->booksRepo = value; }
+		void setBooksRepo(std::vector<Book> const &value) { this->booksRepo = value; }
 
 		/// Gets all books from the repo
-		Repo<Book> GetBooks() const;
+		std::vector<Book> GetBooks() const;
 
 		/**
 		 * Adds a book to the repo
@@ -79,7 +80,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by title
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		Repo<Book> GetFilteredBooks(const std::string &titleFilter);
+		std::vector<Book> GetFilteredBooks(const std::string &titleFilter);
 
 		/**
 		 * Gets books from the repo, filtered by release year
@@ -88,7 +89,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by release year
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		Repo<Book> GetFilteredBooks(const int &releaseYearFilter);
+		std::vector<Book> GetFilteredBooks(const int &releaseYearFilter);
 
 		/// Sorts the books repo by title
 		void SortBooksByTitle();

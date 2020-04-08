@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "../business/services.h"
 #include "../infrastructure/repos.h"

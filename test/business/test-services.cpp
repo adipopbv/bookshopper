@@ -3,15 +3,15 @@
 
 TEST(BookstoreService, GetBooks)
 {
-	Repo<Book> books = Repo<Book>();
+	std::vector<Book> books = std::vector<Book>();
 	Book book = Book("ceva", "cineva", "careva", 2020);
-	books.Add(book);
+	books.push_back(book);
 	BookstoreService service = BookstoreService();
 	ASSERT_THROW(service.GetBooks()[0], EmptyRepoError);
-	service.getBooksRepo().FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 	service = BookstoreService(books);
 	ASSERT_TRUE(service.GetBooks()[0] == books[0]);
-	books.FreeRepo();
+	//books.FreeRepo();
 }
 
 TEST(BookstoreService, AddBookToRepo)
@@ -25,8 +25,8 @@ TEST(BookstoreService, AddBookToRepo)
 	ASSERT_TRUE(service.GetBooks()[1] == book2);
 	ASSERT_THROW(service.AddBookToRepo("ce", "se", "petrece", 123), DuplicateError);
 	ASSERT_THROW(service.AddBookToRepo("", "", "", -3), ValidationError);
-	ASSERT_TRUE(service.GetBooks().Size() == 2);
-	service.getBooksRepo().FreeRepo();
+	ASSERT_TRUE(service.GetBooks().size() == 2);
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, ModifyBookInRepo)
@@ -43,8 +43,8 @@ TEST(BookstoreService, ModifyBookInRepo)
 	ASSERT_THROW(service.ModifyBookInRepo("haa", "yaa", "", "", "", 1), NotFoundError);
 	service.ModifyBookInRepo("ceva", "cineva", "vai", "de", "noi", 2020);
 	ASSERT_TRUE(service.GetBooks()[0] == book3);
-	ASSERT_TRUE(service.GetBooks().Size() == 2);
-	service.getBooksRepo().FreeRepo();
+	ASSERT_TRUE(service.GetBooks().size() == 2);
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, DeleteBookFromRepo)
@@ -58,8 +58,8 @@ TEST(BookstoreService, DeleteBookFromRepo)
 	ASSERT_THROW(service.DeleteBookFromRepo("a", "b"), NotFoundError);
 	service.DeleteBookFromRepo("ceva", "cineva");
 	ASSERT_TRUE(service.GetBooks()[0] == book2);
-	ASSERT_TRUE(service.GetBooks().Size() == 1);
-	service.getBooksRepo().FreeRepo();
+	ASSERT_TRUE(service.GetBooks().size() == 1);
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, SearchBook)
@@ -73,7 +73,7 @@ TEST(BookstoreService, SearchBook)
 	ASSERT_THROW(service.SearchBook("a", "b", "c", 1), NotFoundError);
 	ASSERT_TRUE(service.SearchBook("ceva", "", "", -1) == book1);
 	ASSERT_TRUE(service.SearchBook("ceva", "", "intampla", -1) == book2);
-	service.getBooksRepo().FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, GetFilteredBooks)
@@ -91,13 +91,13 @@ TEST(BookstoreService, GetFilteredBooks)
 	service.AddBookToRepo("ce", "se", "intampla", 2020);
 	ASSERT_THROW(service.GetFilteredBooks("va"), NotFoundError);
 	ASSERT_THROW(service.GetFilteredBooks(1900), NotFoundError);
-	Repo<Book> filteredBooks = service.GetFilteredBooks("ceva");
+	std::vector<Book> filteredBooks = service.GetFilteredBooks("ceva");
 	ASSERT_TRUE(filteredBooks[0] == book1 && filteredBooks[1] == book2);
-	filteredBooks.FreeRepo();
+	//filteredBooks.FreeRepo();
 	filteredBooks = service.GetFilteredBooks(2020);
 	ASSERT_TRUE(filteredBooks[0] == book1 && filteredBooks[1] == book3);
-	filteredBooks.FreeRepo();
-	service.getBooksRepo().FreeRepo();
+	//filteredBooks.FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, SortBooksByTitle)
@@ -113,7 +113,7 @@ TEST(BookstoreService, SortBooksByTitle)
 	ASSERT_TRUE(service.GetBooks()[0] == book1
 			&& service.GetBooks()[1] == book3
 			&& service.GetBooks()[2] == book2);
-	service.getBooksRepo().FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, SortBooksByAuthor)
@@ -129,7 +129,7 @@ TEST(BookstoreService, SortBooksByAuthor)
 	ASSERT_TRUE(service.GetBooks()[0] == book3
 			&& service.GetBooks()[1] == book2
 			&& service.GetBooks()[2] == book1);
-	service.getBooksRepo().FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 }
 
 TEST(BookstoreService, SortBooksByReleaseYearAndGenre)
@@ -145,5 +145,5 @@ TEST(BookstoreService, SortBooksByReleaseYearAndGenre)
 	ASSERT_TRUE(service.GetBooks()[0] == book1
 			&& service.GetBooks()[1] == book3
 			&& service.GetBooks()[2] == book2);
-	service.getBooksRepo().FreeRepo();
+	//service.getBooksRepo().FreeRepo();
 }

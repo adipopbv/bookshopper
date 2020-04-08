@@ -23,13 +23,13 @@ void Book::ValidateData(const std::string title, const std::string author, const
 {
 	std::string message = "";
 	if (title.empty())
-	{ message += "\ninvalid title"; }
+	{ message += "invalid title\n"; }
 	if (author.empty())
-	{ message += "\ninvalid author"; }
+	{ message += "invalid author\n"; }
 	if (genre.empty())
-	{ message += "\ninvalid genre"; }
+	{ message += "invalid genre\n"; }
 	if (releaseYear < 0)
-	{ message += "\ninvalid release year"; }
+	{ message += "invalid release year\n"; }
 	
 	if (!message.empty())
 	{ throw ValidationError(message); }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "business/services.h"
 #include "domain/entities.h"
@@ -7,7 +8,7 @@
 
 auto main() -> int
 {
-	Repo<Book> booksRepo = Repo<Book>(); // the books repository
+	std::vector<Book> booksRepo = std::vector<Book>(); // the books repository
 	BookstoreService bookstoreService = BookstoreService(booksRepo); // the library service
 	BookstoreClient bookstoreClient = BookstoreClient(bookstoreService); // the library client
 

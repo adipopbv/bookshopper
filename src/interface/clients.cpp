@@ -22,13 +22,8 @@ void BookstoreClient::PrintBook(Book const book) const
 
 void BookstoreClient::ListAllBooks() const
 {
-	Repo<Book> books = this->getBookstoreService().GetBooks();
-	if (books.Empty())
-	{
-		this->getIO().PrintString("»No books to show!\n\n");
-		return;
-	}
-	for (int i = 0; i < static_cast<int>(books.Size()); i++)
+	std::vector<Book> books = this->getBookstoreService().GetBooks();
+	for (int i = 0; i < static_cast<int>(books.size()); i++)
 	{
 		this->getIO().PrintString("──────────\n");
 		this->PrintBook(books[i]);
@@ -104,7 +99,7 @@ void BookstoreClient::FilterBooks()
 
 	std::string titleFilter;
 	int releaseYearSearch;
-	Repo<Book> filteredBooks;
+	std::vector<Book> filteredBooks;
 
 	this->getIO().PrintString("\n");
 	int option = this->getIO().ReadInt("»Enter option: ");
@@ -128,7 +123,7 @@ void BookstoreClient::FilterBooks()
 			return;
 			break;
 	}
-	for (int i = 0; i < filteredBooks.Size(); i++)
+	for (int i = 0; i < static_cast<int>(filteredBooks.size()); i++)
 	{
 		this->getIO().PrintString("──────────\n");
 		this->PrintBook(filteredBooks[i]);
@@ -176,7 +171,7 @@ void BookstoreClient::SortBooks()
 void BookstoreClient::ExitApplication() const
 {
 	this->getIO().PrintString("»Exiting application...\n\n");
-	this->getBookstoreService().getBooksRepo().FreeRepo();
+	//this->getBookstoreService().getBooksRepo().FreeRepo();
 }
 
 void BookstoreClient::RunApplication()
@@ -241,7 +236,7 @@ void BookstoreClient::RunApplication()
 		}
 		catch (AppException& e)
 		{
-			this->getIO().PrintString("»Error: " + e.getMessage() + "\n\n");
+			this->getIO().PrintString("»Error:\n" + e.getMessage() + "\n");
 		}
 		this->getIO().PrintString("═══════════════════════\n\n");
 	}
