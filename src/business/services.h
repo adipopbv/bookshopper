@@ -111,4 +111,12 @@ class BookstoreService
 
 		/// Empties the cart
 		void EmptyCart();
+
+		/**
+		 * Adds a book from the repo to the cart, by title
+		 *
+		 * @param title The title of the book to be added
+		 * @throws Exception if book not found, title is invalid or repo is empty
+		 */
+		void AddToCart(const std::string &title);
 };

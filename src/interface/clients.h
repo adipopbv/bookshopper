@@ -53,6 +53,9 @@ class BookstoreClient
 		/// Empties the cart
 		void EmptyCart();
 
+		/// Adds book by title to the cart
+		void AddToCart();
+
 		/// Exits application
 		void ExitApplication() const;
 

@@ -215,3 +215,27 @@ void BookstoreService::EmptyCart()
 	this->setCart(std::vector<Book>());
 }
 
+void BookstoreService::AddToCart(const std::string &title)
+{
+	// exception if repo empty
+	if (this->getBooksRepo().empty())
+	{ throw EmptyRepoError("the book repo is empty\n"); }
+	// exception if title invalid
+	if (title == "")
+	{ throw SearchFieldsError("invalid title\n"); }
+
+	try
+	{
+		std::vector<Book> repo = this->getBooksRepo();
+		std::vector<Book> cart = this->getCart();
+		// find the first book with that title
+		Book book = *std::find_if(repo.begin(), repo.end(), [&title](Book currentBook){ return currentBook.getTitle() == title; });
+
+		cart.push_back(book);
+		this->setCart(cart);
+	}
+	catch (std::exception& e)
+	{
+		throw NotFoundError("book not found\n");
+	}
+}
