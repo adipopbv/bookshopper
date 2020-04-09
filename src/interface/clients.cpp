@@ -140,21 +140,22 @@ void BookstoreClient::SortBooks()
 	this->getIO().PrintString("\n");
 	int option = this->getIO().ReadInt("»Enter option: ");
 	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
 	switch (option)
 	{
 		case 1:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByTitle();
+			service.SortBooksByTitle();
 			break;
 
 		case 2:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByAuthor();
+			service.SortBooksByAuthor();
 			break;
 
 		case 3:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByReleaseYearAndGenre();
+			service.SortBooksByReleaseYearAndGenre();
 			break;
 
 		default:
@@ -163,6 +164,7 @@ void BookstoreClient::SortBooks()
 			break;
 	}
 
+	this->setBookstoreService(service);
 	this->ListAllBooks();
 }
 
