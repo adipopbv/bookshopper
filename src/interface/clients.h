@@ -50,6 +50,9 @@ class BookstoreClient
 		/// Sorts books by title, author or release year and genre
 		void SortBooks();
 
+		/// Empties the cart
+		void EmptyCart();
+
 		/// Exits application
 		void ExitApplication() const;
 

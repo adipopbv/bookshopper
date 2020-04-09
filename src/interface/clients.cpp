@@ -168,6 +168,13 @@ void BookstoreClient::SortBooks()
 	this->ListAllBooks();
 }
 
+void BookstoreClient::EmptyCart()
+{
+	this->getBookstoreService().EmptyCart();
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
 void BookstoreClient::ExitApplication() const
 {
 	this->getIO().PrintString("»Exiting application...\n\n");
@@ -176,21 +183,25 @@ void BookstoreClient::ExitApplication() const
 void BookstoreClient::RunApplication()
 {
 	this->getIO().PrintString("═════ Bookshopper ═════\n\n");
-	std::string options = "";
-	options = options + 
-		"  ╠═[0]: Exit application\n" + 
-		"  ╠═[1]: List all books\n" + 
-		"  ╠═[2]: Add book\n" +
-		"  ╠═[3]: Modify book\n" +
-		"  ╠═[4]: Delete book\n" +
-		"  ╠═[5]: Search book\n" +
-		"  ╠═[6]: Filter books\n" +
-		"  ╚═[7]: Sort books\n";
 	while (true)
 	{
 		try
 		{
-			this->getIO().PrintMenu(options);
+			this->getIO().PrintString(std::string(
+				"»»Menu\n") +
+				"  ╠═[0]: Exit app\n" + 
+				"  ╠═Basic operations:\n" + 
+				"  ║ ╠═[1]: List all books\n" + 
+				"  ║ ╠═[2]: Add book\n" +
+				"  ║ ╠═[3]: Modify book\n" +
+				"  ║ ╠═[4]: Delete book\n" +
+				"  ║ ╠═[5]: Search book\n" +
+				"  ║ ╠═[6]: Filter books\n" +
+				"  ║ ╚═[7]: Sort books\n" +
+				"  ╚═Shopping cart:\n" +
+				"    ╚═[8]: Empty cart\n"
+			);
+			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
 			this->getIO().PrintString("\n═══════════════════════\n\n");
 			switch (command)
@@ -226,6 +237,10 @@ void BookstoreClient::RunApplication()
 
 				case 7:
 					this->SortBooks();
+					break;
+
+				case 8:
+					this->EmptyCart();
 					break;
 	
 				default:

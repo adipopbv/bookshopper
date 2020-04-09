@@ -36,11 +36,4 @@ class TerminalIO
 		 * @param message The message to be displayed
 		 */
 		void PrintString(std::string const &message) const;
-
-		/**
-		 * Prints the application menu in the terminal
-		 *
-		 * @param options The options list to be displayed
-		 */
-		void PrintMenu(std::string const &options) const;
 };

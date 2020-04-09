@@ -1,15 +1,17 @@
 #include "./services.h"
 
-BookstoreService::BookstoreService(const std::vector<Book> &booksRepo)
+BookstoreService::BookstoreService(const std::vector<Book> &booksRepo, const std::vector<Book> &cart)
 {
 	// setting fields of BookstoreService instance to parameter values
 	this->setBooksRepo(booksRepo);
+	this->setCart(cart);
 }
 
 BookstoreService::~BookstoreService()
 {
 	// setting fields of BookstoreService instance to default values
 	this->setBooksRepo(std::vector<Book>());
+	this->setCart(std::vector<Book>());
 }
 
 std::vector<Book> BookstoreService::GetBooks() const 
@@ -206,5 +208,10 @@ void BookstoreService::SortBooksByReleaseYearAndGenre()
 				&& first.getGenre() < second.getGenre()));
 	});
 	this->setBooksRepo(repo);
+}
+
+void BookstoreService::EmptyCart()
+{
+	this->setCart(std::vector<Book>());
 }
 

@@ -26,10 +26,3 @@ void TerminalIO::PrintString(std::string const &message) const
 	std::cout << message;
 }
 
-void TerminalIO::PrintMenu(std::string const &options) const
-{
-	this->PrintString("»»Menu\n");
-	this->PrintString(options);
-	this->PrintString("\n");
-}
-
