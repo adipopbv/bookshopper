@@ -135,3 +135,41 @@ TEST(BookstoreService, SortBooksByReleaseYearAndGenre)
 			&& service.GetBooks()[1] == book3
 			&& service.GetBooks()[2] == book2);
 }
+
+TEST(BookstoreService, AddToCart)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	ASSERT_THROW(service.AddToCart("ce"), EmptyRepoError);
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	ASSERT_THROW(service.AddToCart(""), SearchFieldsError);
+	ASSERT_THROW(service.AddToCart("ceva"), NotFoundError);
+	service.AddToCart("ce");
+	ASSERT_TRUE(service.getCart().size() == 1 && service.getCart()[0] == book1);
+	service.AddToCart("vai");
+	ASSERT_TRUE(service.getCart().size() == 2
+			&& service.getCart()[0] == book1
+			&& service.getCart()[1] == book2);
+	service.AddToCart("ce");
+	ASSERT_TRUE(service.getCart().size() == 3
+			&& service.getCart()[0] == book1
+			&& service.getCart()[1] == book2
+			&& service.getCart()[2] == book1);
+}
+
+TEST(BookstoreService, EmptyCart)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	ASSERT_TRUE(service.getCart().size() == 0);
+	service.AddToCart("ce");
+	ASSERT_TRUE(service.getCart().size() == 1 && service.getCart()[0] == book1);
+	service.EmptyCart();
+	ASSERT_TRUE(service.getCart().size() == 0);
+}
+
