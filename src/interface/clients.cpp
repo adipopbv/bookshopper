@@ -170,7 +170,23 @@ void BookstoreClient::SortBooks()
 
 void BookstoreClient::EmptyCart()
 {
-	this->getBookstoreService().EmptyCart();
+	BookstoreService service = this->getBookstoreService();
+	service.EmptyCart();
+	this->setBookstoreService(service);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
+void BookstoreClient::AddToCart()
+{
+	this->getIO().PrintString("»»Add book\n");
+	this->getIO().PrintString("  ╚═Book to be added:\n");
+	std::string title = this->getIO().ReadString("    └─Title: ");
+
+	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
+	service.AddToCart(title);
+	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
 	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
 }
@@ -199,7 +215,8 @@ void BookstoreClient::RunApplication()
 				"  ║ ╠═[6]: Filter books\n" +
 				"  ║ ╚═[7]: Sort books\n" +
 				"  ╚═Shopping cart:\n" +
-				"    ╚═[8]: Empty cart\n"
+				"    ╠═[8]: Empty cart\n" +
+				"    ╚═[9]: Add book to cart\n"
 			);
 			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
@@ -241,6 +258,10 @@ void BookstoreClient::RunApplication()
 
 				case 8:
 					this->EmptyCart();
+					break;
+
+				case 9:
+					this->AddToCart();
 					break;
 	
 				default:
