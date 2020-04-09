@@ -14,9 +14,12 @@ class BookstoreService
 		/// The books repository
 		std::vector<Book> booksRepo = std::vector<Book>();
 
+		/// The shopping cart repository
+		std::vector<Book> cart = std::vector<Book>();
+
 	public:
 		/// Library service constructor
-		BookstoreService(const std::vector<Book> &booksRepo = std::vector<Book>());
+		BookstoreService(const std::vector<Book> &booksRepo = std::vector<Book>(), const std::vector<Book> &cart = std::vector<Book>());
 
 		/// Library service destructor
 		~BookstoreService();
@@ -25,6 +28,11 @@ class BookstoreService
 		std::vector<Book> getBooksRepo() const { return this->booksRepo; }
 		/// Books repository setter
 		void setBooksRepo(std::vector<Book> const &value) { this->booksRepo = value; }
+
+		/// Books repository getter
+		std::vector<Book> getCart() const { return this->cart; }
+		/// Books repository setter
+		void setCart(std::vector<Book> const &value) { this->cart = value; }
 
 		/// Gets all books from the repo
 		std::vector<Book> GetBooks() const;
@@ -100,4 +108,7 @@ class BookstoreService
 
 		/// Sorts the books repo by release year and genre
 		void SortBooksByReleaseYearAndGenre();
+
+		/// Empties the cart
+		void EmptyCart();
 };
