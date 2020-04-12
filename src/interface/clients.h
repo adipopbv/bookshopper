@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #include "../business/services.h"
 #include "../infrastructure/repos.h"
@@ -47,6 +49,18 @@ class BookstoreClient
 
 		/// Sorts books by title, author or release year and genre
 		void SortBooks();
+
+		/// Lists all books in the cart
+		void ListAllCartBooks() const;
+
+		/// Empties the cart
+		void EmptyCart();
+
+		/// Adds book by title to the cart
+		void AddToCart();
+
+		/// Adds random books to the cart
+		void AddRandomBooksToCart();
 
 		/// Exits application
 		void ExitApplication() const;

@@ -1,21 +1,23 @@
 #include "./services.h"
 
-BookstoreService::BookstoreService(const Repo<Book> &booksRepo)
+BookstoreService::BookstoreService(const std::vector<Book> &booksRepo, const std::vector<Book> &cart)
 {
 	// setting fields of BookstoreService instance to parameter values
 	this->setBooksRepo(booksRepo);
+	this->setCart(cart);
 }
 
 BookstoreService::~BookstoreService()
 {
 	// setting fields of BookstoreService instance to default values
-	this->setBooksRepo(Repo<Book>());
+	this->setBooksRepo(std::vector<Book>());
+	this->setCart(std::vector<Book>());
 }
 
-Repo<Book> BookstoreService::GetBooks() const 
+std::vector<Book> BookstoreService::GetBooks() const 
 {
-	if (this->getBooksRepo().Empty()) // throw exception if empty repo
-	{ throw EmptyRepoError("no book in repository"); }
+	if (this->getBooksRepo().empty()) // throw exception if empty repo
+	{ throw EmptyRepoError("no book in repository\n"); }
 	// returning all books
 	return this->getBooksRepo();
 }
@@ -23,170 +25,251 @@ Repo<Book> BookstoreService::GetBooks() const
 void BookstoreService::AddBookToRepo(const std::string &title, const std::string &author, const std::string &genre, const int &releaseYear)
 {
 	Book book = Book(title, author, genre, releaseYear);
-	this->booksRepo.Add(book); // adding a new book to the end of the repo
+	std::for_each(this->booksRepo.begin(), this->booksRepo.end(), [&book](Book currentBook){ 
+		if (currentBook == book)
+		{ throw DuplicateError("book already in repo\n"); }
+	});
+	std::vector<Book> newRepo = this->getBooksRepo();
+	newRepo.push_back(book);
+	this->setBooksRepo(newRepo); // adding a new book to the end of the repo
 }
 
 void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const std::string &authorSearch, const std::string &title, const std::string &author, const std::string &genre, const int &releaseYear)
 {
 	// validating search fields
 	if (titleSearch.empty() || authorSearch.empty())
-	{ throw SearchFieldsError("nothing to search by"); }
+	{ throw SearchFieldsError("nothing to search by\n"); }
 
-	// making a working copy of the repo
-	Repo<Book> tempRepo = this->getBooksRepo();
-
-	// getting the book to be modified's index
-	int oldBookIndex = this->getBooksRepo().GetIndexOfElement(
-		[ &titleSearch, &authorSearch ]
-		( Book searchedBook ) 
-		{ return searchedBook.getTitle() == titleSearch && searchedBook.getAuthor() == authorSearch; }
-	);
-
-	// making a new one with the wanted values changed
-	Book newBook = tempRepo[oldBookIndex];
-	if (!title.empty())
-	{ newBook.setTitle(title); }
-	if (!author.empty())
-	{ newBook.setAuthor(author); }
-	if (!genre.empty())
-	{ newBook.setGenre(genre); }
-	if (releaseYear != -1)
-	{ newBook.setReleaseYear(releaseYear); }
-	newBook.ValidateData(newBook.getTitle(), newBook.getAuthor(), newBook.getGenre(), newBook.getReleaseYear());
-
-	// removing the old one and inserting the new one in place
-	tempRepo.ValidateDuplicate(newBook);
-	tempRepo.Erase(oldBookIndex); // remove the old one
-	tempRepo.Insert(newBook, oldBookIndex); // insert the new one
-	// set the new state
-	this->setBooksRepo(tempRepo);
+	try
+	{
+		std::vector<Book> newRepo = this->getBooksRepo();
+		Book oldBook = *std::find_if(
+			newRepo.begin(),
+			newRepo.end(),
+			[&titleSearch, &authorSearch](Book currentBook)
+			{ return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch); }
+		);
+		std::vector<Book>::iterator oldIter = std::find(newRepo.begin(), newRepo.end(), oldBook);
+    
+		Book newBook = oldBook; // copying the book to be modified
+		// changing wanted values
+		if (!title.empty())
+		{ newBook.setTitle(title); }
+		if (!author.empty())
+		{ newBook.setAuthor(author); }
+		if (!genre.empty())
+		{ newBook.setGenre(genre); }
+		if (releaseYear != -1)
+		{ newBook.setReleaseYear(releaseYear); }
+		newBook.ValidateData(newBook.getTitle(), newBook.getAuthor(), newBook.getGenre(), newBook.getReleaseYear());
+    
+		newRepo.erase(oldIter); // remove the old one
+		std::vector<Book>::iterator newIter = std::find(newRepo.begin(), newRepo.end(), newBook);
+		if (newBook == *newIter)
+		{ throw DuplicateError("book already in repo\n"); }
+		newRepo.insert(oldIter, newBook); // insert the new one
+		this->setBooksRepo(newRepo);
+	}
+	catch (std::exception& e) 
+	{
+		throw NotFoundError("book not found in repo\n"); // exception if book not found
+	}
 }
 
 void BookstoreService::DeleteBookFromRepo(const std::string &titleSearch, const std::string &authorSearch)
 {
 	// validating search fields
 	if (titleSearch.empty() || authorSearch.empty())
-	{ throw SearchFieldsError("nothing to search by"); }
+	{ throw SearchFieldsError("nothing to search by\n"); }
 
-	// making a working copy of the repo
-	Repo<Book> tempRepo = this->getBooksRepo();
-
-	// getting the book to be modified's index
-	int oldBookIndex = this->getBooksRepo().GetIndexOfElement(
-		[ &titleSearch, &authorSearch ]
-		( Book searchedBook ) 
-		{ return searchedBook.getTitle() == titleSearch && searchedBook.getAuthor() == authorSearch; }
-	);
-
-	tempRepo.Erase(oldBookIndex); // removing the book
-	// set the new state
-	this->setBooksRepo(tempRepo);
+	try
+	{
+		std::vector<Book> newRepo = this->getBooksRepo();
+		Book oldBook = *std::find_if(
+			newRepo.begin(),
+			newRepo.end(),
+			[&titleSearch, &authorSearch](Book currentBook)
+			{ return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch); }
+		);
+		std::vector<Book>::iterator oldIter = std::find(newRepo.begin(), newRepo.end(), oldBook);
+    
+		newRepo.erase(oldIter); // remove the old one
+		this->setBooksRepo(newRepo);
+	}
+	catch (std::exception& e)
+	{
+		throw NotFoundError("book not found in repo\n"); // exception if book not found
+	}
 }
 
 Book BookstoreService::SearchBook(const std::string &titleSearch, const std::string &authorSearch, const std::string &genreSearch, const int &releaseYearSearch)
 {
 	if (titleSearch.empty() && authorSearch.empty() && genreSearch.empty() && releaseYearSearch == -1)
-	{ throw SearchFieldsError("\nno search fields entered"); } // throw exception if no searche fields entered
+	{ throw SearchFieldsError("no search fields entered\n"); } // throw exception if no searche fields entered
 
-	Book searchedBook = this->getBooksRepo().GetElement(
-		[ &titleSearch, &authorSearch, &genreSearch, &releaseYearSearch ]
-		( Book searchedBook ) 
-		{ 
-			bool found = true;
-			if (!titleSearch.empty()) // search by title
-			{ found = found && searchedBook.getTitle() == titleSearch; } 
-			if (!authorSearch.empty()) // search by author
-			{ found = found && searchedBook.getAuthor() == authorSearch; }
-			if (!genreSearch.empty()) // search by genre
-			{ found = found && searchedBook.getGenre() == genreSearch; }
-			if (releaseYearSearch != -1) // search by release year
-			{ found = found && searchedBook.getReleaseYear() == releaseYearSearch; }
-			return found;
-		}
-	);
-	return searchedBook;
+	std::vector<Book> repo = this->getBooksRepo();
+	try
+	{
+		Book searchedBook = *std::find_if(
+			repo.begin(),
+			repo.end(),
+			[&titleSearch, &authorSearch, &genreSearch, &releaseYearSearch]
+			(Book currentBook)
+			{
+				bool found = true;
+				if (!titleSearch.empty()) // search by title
+				{ found = found && currentBook.getTitle() == titleSearch; } 
+				if (!authorSearch.empty()) // search by author
+				{ found = found && currentBook.getAuthor() == authorSearch; }
+				if (!genreSearch.empty()) // search by genre
+				{ found = found && currentBook.getGenre() == genreSearch; }
+				if (releaseYearSearch != -1) // search by release year
+				{ found = found && currentBook.getReleaseYear() == releaseYearSearch; }
+				return found;
+			}
+		);
+		return searchedBook;
+	}
+	catch (std::exception& e)
+	{
+		throw NotFoundError("book not found\n");
+	}
 }
 
-Repo<Book> BookstoreService::GetFilteredBooks(const std::string &titleFilter)
+std::vector<Book> BookstoreService::GetFilteredBooks(const std::string &titleFilter)
 {
 	if (titleFilter.empty()) // exception if filter invalid
-	{ throw SearchFieldsError("\ninvalid filter value"); }
-	if (this->getBooksRepo().Empty()) // exception if repo empty
-	{ throw EmptyRepoError("\nthe repository is empty"); }
+	{ throw SearchFieldsError("invalid filter value\n"); }
+	if (this->getBooksRepo().empty()) // exception if repo empty
+	{ throw EmptyRepoError("the repository is empty\n"); }
 
-	Repo<Book> filteredBooks = Repo<Book>(); // making a new repo to put all needed books into
+	std::vector<Book> filteredBooks = std::vector<Book>(); // making a new repo to put all needed books into
+	std::vector<Book> repo = this->getBooksRepo();
+	std::for_each(repo.begin(), repo.end(),
+		[&filteredBooks, &titleFilter]
+		(Book currentBook)
+		{
+			if (currentBook.getTitle() == titleFilter) // getting books with the given title
+			{ filteredBooks.push_back(currentBook); }
+		}
+	);
 
-	for (int i = 0; i < this->getBooksRepo().Size(); i++) // iterating all books
-	{
-		if (this->getBooksRepo()[i].getTitle() == titleFilter) // getting books with the given title
-		{ filteredBooks.Add(this->getBooksRepo()[i]); }
-	}
-	if (filteredBooks.Empty()) // if no books whit that title was found, throw exception
-	{ throw NotFoundError("\nno book has that title"); } 
+	if (filteredBooks.empty()) // if no books whit that title was found, throw exception
+	{ throw NotFoundError("no book has that title\n"); } 
 	return filteredBooks;
 }
 
-Repo<Book> BookstoreService::GetFilteredBooks(const int &releaseYearFilter)
+std::vector<Book> BookstoreService::GetFilteredBooks(const int &releaseYearFilter)
 {
 	if (releaseYearFilter < 0) // exception if filer invalid
-	{ throw SearchFieldsError("\ninvalid filter value"); }
-	if (this->getBooksRepo().Empty()) // exception if repo empty
-	{ throw EmptyRepoError("\nthe repository is empty"); }
+	{ throw SearchFieldsError("\ninvalid filter value\n"); }
+	if (this->getBooksRepo().empty()) // exception if repo empty
+	{ throw EmptyRepoError("the repository is empty\n"); }
 
-	Repo<Book> filteredBooks = Repo<Book>(); // making a new repo to put all needed books into
+	std::vector<Book> filteredBooks = std::vector<Book>(); // making a new repo to put all needed books into
+	std::vector<Book> repo = this->getBooksRepo();
+	std::for_each(repo.begin(), repo.end(),
+		[&filteredBooks, &releaseYearFilter]
+		(Book currentBook)
+		{
+			if (currentBook.getReleaseYear() == releaseYearFilter) // getting books with the given title
+			{ filteredBooks.push_back(currentBook); }
+		}
+	);
 
-	for (int i = 0; i < this->getBooksRepo().Size(); i++) // iterating all books
-	{
-		if (this->getBooksRepo()[i].getReleaseYear() == releaseYearFilter) // getting books with the given release year
-		{ filteredBooks.Add(this->getBooksRepo()[i]); }
-	}
-	if (filteredBooks.Empty()) // if no books whit that release year was found, throw exception
-	{ throw NotFoundError("no book has that release year"); }
+	if (filteredBooks.empty()) // if no books whit that release year was found, throw exception
+	{ throw NotFoundError("no book has that release year\n"); }
 	return filteredBooks;
 }
 
 void BookstoreService::SortBooksByTitle()
 {
 	// getting a copy of the repo
-	Repo<Book> tempRepo = this->getBooksRepo();
-	for (int i = 0; i < tempRepo.Size() - 1; i++)
-	{
-		for (int j = i + 1; j < tempRepo.Size(); j++)
-		{
-			if (tempRepo[i].getTitle() > tempRepo[j].getTitle())
-			{ tempRepo.Swap(i, j); } // swap books
-		}
-	}
-	this->setBooksRepo(tempRepo);
+	std::vector<Book> repo = this->getBooksRepo();
+	std::sort(repo.begin(), repo.end(), [](Book first, Book second){ return (first.getTitle() < second.getTitle()); });
+	this->setBooksRepo(repo);
 }
 
 void BookstoreService::SortBooksByAuthor()
 {
-	Repo<Book> tempRepo = this->getBooksRepo();
-	for (int i = 0; i < tempRepo.Size() - 1; i++)
-	{
-		for (int j = i + 1; j < tempRepo.Size(); j++)
-		{
-			if (tempRepo[i].getAuthor() > tempRepo[j].getAuthor())
-			{ tempRepo.Swap(i, j); } // swap books
-		}
-	}
-	this->setBooksRepo(tempRepo);
+	// getting a copy of the repo
+	std::vector<Book> repo = this->getBooksRepo();
+	std::sort(repo.begin(), repo.end(), [](Book first, Book second){ return (first.getAuthor() < second.getAuthor()); });
+	this->setBooksRepo(repo);
 }
 
 void BookstoreService::SortBooksByReleaseYearAndGenre()
 {
-	Repo<Book> tempRepo = this->getBooksRepo();
-	for (int i = 0; i < tempRepo.Size() - 1; i++)
+	// getting a copy of the repo
+	std::vector<Book> repo = this->getBooksRepo();
+	std::sort(repo.begin(), repo.end(), [](Book first, Book second){ 
+		return (first.getReleaseYear() < second.getReleaseYear()
+				|| (first.getReleaseYear() == second.getReleaseYear()
+				&& first.getGenre() < second.getGenre()));
+	});
+	this->setBooksRepo(repo);
+}
+
+std::vector<Book> BookstoreService::GetCartBooks() const 
+{
+	if (this->getCart().empty()) // throw exception if empty cart
+	{ throw EmptyRepoError("no book in cart\n"); }
+	// returning all cart books
+	return this->getCart();
+}
+
+void BookstoreService::EmptyCart()
+{
+	this->setCart(std::vector<Book>());
+}
+
+void BookstoreService::AddToCart(const std::string &title)
+{
+	// exception if repo empty
+	if (this->getBooksRepo().empty())
+	{ throw EmptyRepoError("the book repo is empty\n"); }
+	// exception if title invalid
+	if (title.empty())
+	{ throw SearchFieldsError("invalid title\n"); }
+
+	try
 	{
-		for (int j = i + 1; j < tempRepo.Size(); j++)
-		{
-			if (tempRepo[i].getReleaseYear() > tempRepo[j].getReleaseYear()
-					|| (tempRepo[i].getReleaseYear() == tempRepo[j].getReleaseYear()
-					&& tempRepo[i].getGenre() > tempRepo[j].getGenre()))
-			{ tempRepo.Swap(i, j); } // swap books if release years differ or if equal and genres differ
-		}
+		std::vector<Book> repo = this->getBooksRepo();
+		std::vector<Book> cart = this->getCart();
+		// find the first book with that title
+		Book book = *std::find_if(repo.begin(), repo.end(), [&title](Book currentBook){ return currentBook.getTitle() == title; });
+
+		cart.push_back(book);
+		this->setCart(cart);
 	}
-	this->setBooksRepo(tempRepo);
+	catch (std::exception& e)
+	{
+		throw NotFoundError("book not found\n");
+	}
+}
+
+void BookstoreService::AddRandomBooksToCart(const int &count)
+{
+	// exception if repo empty
+	if (this->getBooksRepo().empty())
+	{ throw EmptyRepoError("the book repo is empty\n"); }
+	// exception if count invalid
+	if (count <= 0)
+	{ throw ParameterError("invalid books count\n"); }
+
+	std::vector<Book> repo = this->getBooksRepo();
+	std::vector<Book> cart = this->getCart();
+
+	for (int i = 0; i < count; i++)
+	{
+		// random index for repo elements
+		std::mt19937 mt{ std::random_device{}() };
+		std::uniform_int_distribution<> dist(0, repo.size()-1);
+		int index = dist(mt);
+
+		// add book to cart
+		cart.push_back(repo[index]);
+	}
+	this->setCart(cart);
 }
 

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <random>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"
@@ -10,22 +13,34 @@ class BookstoreService
 {
 	private:
 		/// The books repository
-		Repo<Book> booksRepo = Repo<Book>();
+		std::vector<Book> booksRepo = std::vector<Book>();
+
+		/// The shopping cart repository
+		std::vector<Book> cart = std::vector<Book>();
 
 	public:
 		/// Library service constructor
-		BookstoreService(const Repo<Book> &booksRepo = Repo<Book>());
+		BookstoreService(const std::vector<Book> &booksRepo = std::vector<Book>(), const std::vector<Book> &cart = std::vector<Book>());
 
 		/// Library service destructor
 		~BookstoreService();
 
 		/// Books repository getter
-		Repo<Book> getBooksRepo() const { return this->booksRepo; }
+		std::vector<Book> getBooksRepo() const { return this->booksRepo; }
 		/// Books repository setter
-		void setBooksRepo(Repo<Book> const &value) { this->booksRepo = value; }
+		void setBooksRepo(std::vector<Book> const &value) { this->booksRepo = value; }
 
-		/// Gets all books from the repo
-		Repo<Book> GetBooks() const;
+		/// Books repository getter
+		std::vector<Book> getCart() const { return this->cart; }
+		/// Books repository setter
+		void setCart(std::vector<Book> const &value) { this->cart = value; }
+
+		/**
+		 * Gets all books from the repo
+		 *
+		 * @throws Exception if empty repo
+		 */
+		std::vector<Book> GetBooks() const;
 
 		/**
 		 * Adds a book to the repo
@@ -79,7 +94,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by title
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		Repo<Book> GetFilteredBooks(const std::string &titleFilter);
+		std::vector<Book> GetFilteredBooks(const std::string &titleFilter);
 
 		/**
 		 * Gets books from the repo, filtered by release year
@@ -88,7 +103,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by release year
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		Repo<Book> GetFilteredBooks(const int &releaseYearFilter);
+		std::vector<Book> GetFilteredBooks(const int &releaseYearFilter);
 
 		/// Sorts the books repo by title
 		void SortBooksByTitle();
@@ -98,4 +113,30 @@ class BookstoreService
 
 		/// Sorts the books repo by release year and genre
 		void SortBooksByReleaseYearAndGenre();
+
+		/**
+		 * Gets all books from the cart
+		 *
+		 * @throws Exception if empty cart
+		 */
+		std::vector<Book> GetCartBooks() const;
+
+		/// Empties the cart
+		void EmptyCart();
+
+		/**
+		 * Adds a book from the repo to the cart, by title
+		 *
+		 * @param title The title of the book to be added
+		 * @throws Exception if book not found, title is invalid or repo is empty
+		 */
+		void AddToCart(const std::string &title);
+
+		/**
+		 * Adds random books to the cart
+		 *
+		 * @param count The number of books to randomly be added
+		 * @throws Exception if count is not valid or repo is empty
+		 */
+		void AddRandomBooksToCart(const int &count);
 };

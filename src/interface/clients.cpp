@@ -22,17 +22,11 @@ void BookstoreClient::PrintBook(Book const book) const
 
 void BookstoreClient::ListAllBooks() const
 {
-	Repo<Book> books = this->getBookstoreService().GetBooks();
-	if (books.Empty())
-	{
-		this->getIO().PrintString("»No books to show!\n\n");
-		return;
-	}
-	for (int i = 0; i < static_cast<int>(books.Size()); i++)
-	{
+	std::vector<Book> books = this->getBookstoreService().GetBooks();
+	std::for_each(books.begin(), books.end(), [this](Book book){
 		this->getIO().PrintString("──────────\n");
-		this->PrintBook(books[i]);
-	}
+		this->PrintBook(book);
+	});
 	this->getIO().PrintString("──────────\n\n");
 }
 
@@ -104,7 +98,7 @@ void BookstoreClient::FilterBooks()
 
 	std::string titleFilter;
 	int releaseYearSearch;
-	Repo<Book> filteredBooks;
+	std::vector<Book> filteredBooks;
 
 	this->getIO().PrintString("\n");
 	int option = this->getIO().ReadInt("»Enter option: ");
@@ -128,11 +122,10 @@ void BookstoreClient::FilterBooks()
 			return;
 			break;
 	}
-	for (int i = 0; i < filteredBooks.Size(); i++)
-	{
+	std::for_each(filteredBooks.begin(), filteredBooks.end(), [this](Book filteredBook){
 		this->getIO().PrintString("──────────\n");
-		this->PrintBook(filteredBooks[i]);
-	}
+		this->PrintBook(filteredBook);
+	});
 	this->getIO().PrintString("──────────\n\n");
 }
 
@@ -147,21 +140,22 @@ void BookstoreClient::SortBooks()
 	this->getIO().PrintString("\n");
 	int option = this->getIO().ReadInt("»Enter option: ");
 	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
 	switch (option)
 	{
 		case 1:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByTitle();
+			service.SortBooksByTitle();
 			break;
 
 		case 2:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByAuthor();
+			service.SortBooksByAuthor();
 			break;
 
 		case 3:
 			this->getIO().PrintString("\n");
-			this->getBookstoreService().SortBooksByReleaseYearAndGenre();
+			service.SortBooksByReleaseYearAndGenre();
 			break;
 
 		default:
@@ -170,33 +164,89 @@ void BookstoreClient::SortBooks()
 			break;
 	}
 
+	this->setBookstoreService(service);
 	this->ListAllBooks();
+}
+
+void BookstoreClient::ListAllCartBooks() const
+{
+	std::vector<Book> booksInCart = this->getBookstoreService().GetCartBooks();
+	std::for_each(booksInCart.begin(), booksInCart.end(), [this](Book book){
+		this->getIO().PrintString("──────────\n");
+		this->PrintBook(book);
+	});
+	this->getIO().PrintString("──────────\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
+void BookstoreClient::EmptyCart()
+{
+	BookstoreService service = this->getBookstoreService();
+	service.EmptyCart();
+	this->setBookstoreService(service);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
+void BookstoreClient::AddToCart()
+{
+	this->getIO().PrintString("»»Add book to cart\n");
+	this->getIO().PrintString("  ╚═Book to be added:\n");
+	std::string title = this->getIO().ReadString("    └─Title: ");
+
+	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
+	service.AddToCart(title);
+	this->setBookstoreService(service);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
+void BookstoreClient::AddRandomBooksToCart()
+{
+	this->getIO().PrintString("»»Add random books to cart\n");
+	this->getIO().PrintString("  ╚═Number of books to be added:\n");
+	int count = this->getIO().ReadInt("    └─Books count: ");
+
+	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
+	service.AddRandomBooksToCart(count);
+	this->setBookstoreService(service);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+
 }
 
 void BookstoreClient::ExitApplication() const
 {
 	this->getIO().PrintString("»Exiting application...\n\n");
-	this->getBookstoreService().getBooksRepo().FreeRepo();
 }
 
 void BookstoreClient::RunApplication()
 {
 	this->getIO().PrintString("═════ Bookshopper ═════\n\n");
-	std::string options = "";
-	options = options + 
-		"  ╠═[0]: Exit application\n" + 
-		"  ╠═[1]: List all books\n" + 
-		"  ╠═[2]: Add book\n" +
-		"  ╠═[3]: Modify book\n" +
-		"  ╠═[4]: Delete book\n" +
-		"  ╠═[5]: Search book\n" +
-		"  ╠═[6]: Filter books\n" +
-		"  ╚═[7]: Sort books\n";
 	while (true)
 	{
 		try
 		{
-			this->getIO().PrintMenu(options);
+			this->getIO().PrintString(std::string(
+				"»»Menu\n") +
+				"  ╠═[0]: Exit app\n" + 
+				"  ╠═Basic operations:\n" + 
+				"  ║ ╠═[1]: List all books\n" + 
+				"  ║ ╠═[2]: Add book\n" +
+				"  ║ ╠═[3]: Modify book\n" +
+				"  ║ ╠═[4]: Delete book\n" +
+				"  ║ ╠═[5]: Search book\n" +
+				"  ║ ╠═[6]: Filter books\n" +
+				"  ║ ╚═[7]: Sort books\n" +
+				"  ╚═Shopping cart:\n" +
+				"    ╠═[8]: List cart\n" +
+				"    ╠═[9]: Empty cart\n" +
+				"    ╠═[10]: Add book to cart\n" +
+				"    ╚═[11]: Add random books to cart\n"
+			);
+			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
 			this->getIO().PrintString("\n═══════════════════════\n\n");
 			switch (command)
@@ -233,6 +283,22 @@ void BookstoreClient::RunApplication()
 				case 7:
 					this->SortBooks();
 					break;
+
+				case 8:
+					this->ListAllCartBooks();
+					break;
+
+				case 9:
+					this->EmptyCart();
+					break;
+
+				case 10:
+					this->AddToCart();
+					break;
+
+				case 11:
+					this->AddRandomBooksToCart();
+					break;
 	
 				default:
 					this->getIO().PrintString("»Invalid command!\n\n");
@@ -241,7 +307,7 @@ void BookstoreClient::RunApplication()
 		}
 		catch (AppException& e)
 		{
-			this->getIO().PrintString("»Error: " + e.getMessage() + "\n\n");
+			this->getIO().PrintString("»Error:\n" + e.getMessage() + "\n");
 		}
 		this->getIO().PrintString("═══════════════════════\n\n");
 	}
