@@ -1,8 +1,11 @@
-<h1 align="center"> Bookshopper </h1>
+<h1 align="center"> 
+	<img src=".github/pictures/bookshopper-menu-title.png" align="center" height="130"> 
+	<br>
+	<font size="4"> Bookshopper application </font>
+</h1>
 
 ## Table of Contents
 
-<img src=".github/pictures/bookshopper-menu-main.png" align="right" height="180px">
 
 - [Details](#details)
 - [Get the app](#get-the-app)
@@ -35,8 +38,9 @@ __Linux__: No installation is required. Just move the downloaded binary file whe
 
 <h4 align="center"> Running: </h4>
 
-__Linux__: If the install location is in the <code>$PATH</code> variable, you can run the app by typing <code>bookshopper</code> in a command-line environment like a terminal emulator or a tty.
-If the install location is not in the <code>$PATH</code> variable, you need to provide the relative (or absolute) path to the binary file in the command-line environment of your choice.
+__Linux__: 
+* If the install location is in the <code>$PATH</code> variable, you can run the app by typing <code>bookshopper</code> in a command-line environment like a terminal emulator or a tty.
+* If the install location is not in the <code>$PATH</code> variable, you need to provide the relative (or absolute) path to the binary file in the command-line environment of your choice.
 
 ## Usage
 
@@ -46,24 +50,31 @@ To select an operation, type the command number indicating the wanted operation 
 
 A book has some fields: _title_, _author_, _genre_, _release year_ and is uniqely identified by _**title**_ and _**author**_. The app should do the following operations:
 > 1. Display the full list of books
+
 > 2. Basic operations:
 >    * Add book
 >    * Modify book
 >    * Delete book
+<img src=".github/pictures/bookshopper-menu-main.png" align="right" height="350px">
+
 > 3. Search book (by any fields)
+
 > 4. Filter books by:
 >    * Title
 >    * Release year
+
 > 5. Sort books by:
 >    * Title
 >    * Author
 >    * Release year and genre
+
 > 6. Shopping cart operations:
+>    * List books in cart
 >    * Empty the shopping cart
 >    * Add book to cart (by title)
 >    * Add random books to cart
->    * Export cart as CVS
+>    * \*Export cart as CVS
 
-For now, only functionality __1__ to __5__ are implemented in the latest release.
+__\*__ = Not yet implemented. 
 
 A more elaborate manual will be added to the [wiki](https://github.com/adipopbv/bookshopper/wiki) if decided necessary.
