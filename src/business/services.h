@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <random>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"
@@ -34,7 +35,11 @@ class BookstoreService
 		/// Books repository setter
 		void setCart(std::vector<Book> const &value) { this->cart = value; }
 
-		/// Gets all books from the repo
+		/**
+		 * Gets all books from the repo
+		 *
+		 * @throws Exception if empty repo
+		 */
 		std::vector<Book> GetBooks() const;
 
 		/**
@@ -109,6 +114,13 @@ class BookstoreService
 		/// Sorts the books repo by release year and genre
 		void SortBooksByReleaseYearAndGenre();
 
+		/**
+		 * Gets all books from the cart
+		 *
+		 * @throws Exception if empty cart
+		 */
+		std::vector<Book> GetCartBooks() const;
+
 		/// Empties the cart
 		void EmptyCart();
 
@@ -119,4 +131,12 @@ class BookstoreService
 		 * @throws Exception if book not found, title is invalid or repo is empty
 		 */
 		void AddToCart(const std::string &title);
+
+		/**
+		 * Adds random books to the cart
+		 *
+		 * @param count The number of books to randomly be added
+		 * @throws Exception if count is not valid or repo is empty
+		 */
+		void AddRandomBooksToCart(const int &count);
 };

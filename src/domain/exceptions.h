@@ -58,3 +58,10 @@ class SearchFieldsError: public AppException
 		SearchFieldsError(std::string const message) :AppException(message) { }
 };
 
+class ParameterError: public AppException
+{
+	public:
+		/// Exception constructor
+		ParameterError(std::string const message) :AppException(message) { }
+};
+

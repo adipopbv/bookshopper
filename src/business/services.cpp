@@ -210,6 +210,14 @@ void BookstoreService::SortBooksByReleaseYearAndGenre()
 	this->setBooksRepo(repo);
 }
 
+std::vector<Book> BookstoreService::GetCartBooks() const 
+{
+	if (this->getCart().empty()) // throw exception if empty cart
+	{ throw EmptyRepoError("no book in cart\n"); }
+	// returning all cart books
+	return this->getCart();
+}
+
 void BookstoreService::EmptyCart()
 {
 	this->setCart(std::vector<Book>());
@@ -221,7 +229,7 @@ void BookstoreService::AddToCart(const std::string &title)
 	if (this->getBooksRepo().empty())
 	{ throw EmptyRepoError("the book repo is empty\n"); }
 	// exception if title invalid
-	if (title == "")
+	if (title.empty())
 	{ throw SearchFieldsError("invalid title\n"); }
 
 	try
@@ -239,3 +247,29 @@ void BookstoreService::AddToCart(const std::string &title)
 		throw NotFoundError("book not found\n");
 	}
 }
+
+void BookstoreService::AddRandomBooksToCart(const int &count)
+{
+	// exception if repo empty
+	if (this->getBooksRepo().empty())
+	{ throw EmptyRepoError("the book repo is empty\n"); }
+	// exception if count invalid
+	if (count <= 0)
+	{ throw ParameterError("invalid books count\n"); }
+
+	std::vector<Book> repo = this->getBooksRepo();
+	std::vector<Book> cart = this->getCart();
+
+	for (int i = 0; i < count; i++)
+	{
+		// random index for repo elements
+		std::mt19937 mt{ std::random_device{}() };
+		std::uniform_int_distribution<> dist(0, repo.size()-1);
+		int index = dist(mt);
+
+		// add book to cart
+		cart.push_back(repo[index]);
+	}
+	this->setCart(cart);
+}
+
