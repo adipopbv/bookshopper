@@ -136,6 +136,26 @@ TEST(BookstoreService, SortBooksByReleaseYearAndGenre)
 			&& service.GetBooks()[2] == book2);
 }
 
+TEST(BookstoreService, GetCartBooks)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	std::vector<Book> cart = std::vector<Book>();
+	ASSERT_THROW(service.GetCartBooks(), EmptyRepoError);
+	cart.push_back(service.getBooksRepo()[0]);
+	service.setCart(cart);
+	ASSERT_TRUE(service.GetCartBooks().size() == 1
+			&& service.GetCartBooks()[0] == book1);
+	cart.push_back(service.getBooksRepo()[1]);
+	service.setCart(cart);
+	ASSERT_TRUE(service.GetCartBooks().size() == 2
+			&& service.GetCartBooks()[0] == book1
+			&& service.GetCartBooks()[1] == book2);
+}
+
 TEST(BookstoreService, AddToCart)
 {
 	Book book1 = Book("ce", "se", "intampla", 301);
@@ -147,16 +167,16 @@ TEST(BookstoreService, AddToCart)
 	ASSERT_THROW(service.AddToCart(""), SearchFieldsError);
 	ASSERT_THROW(service.AddToCart("ceva"), NotFoundError);
 	service.AddToCart("ce");
-	ASSERT_TRUE(service.getCart().size() == 1 && service.getCart()[0] == book1);
+	ASSERT_TRUE(service.GetCartBooks().size() == 1 && service.GetCartBooks()[0] == book1);
 	service.AddToCart("vai");
-	ASSERT_TRUE(service.getCart().size() == 2
-			&& service.getCart()[0] == book1
-			&& service.getCart()[1] == book2);
+	ASSERT_TRUE(service.GetCartBooks().size() == 2
+			&& service.GetCartBooks()[0] == book1
+			&& service.GetCartBooks()[1] == book2);
 	service.AddToCart("ce");
-	ASSERT_TRUE(service.getCart().size() == 3
-			&& service.getCart()[0] == book1
-			&& service.getCart()[1] == book2
-			&& service.getCart()[2] == book1);
+	ASSERT_TRUE(service.GetCartBooks().size() == 3
+			&& service.GetCartBooks()[0] == book1
+			&& service.GetCartBooks()[1] == book2
+			&& service.GetCartBooks()[2] == book1);
 }
 
 TEST(BookstoreService, EmptyCart)
@@ -166,10 +186,23 @@ TEST(BookstoreService, EmptyCart)
 	BookstoreService service = BookstoreService();
 	service.AddBookToRepo("ce", "se", "intampla", 301);
 	service.AddBookToRepo("vai", "de", "noi", 2020);
-	ASSERT_TRUE(service.getCart().size() == 0);
+	ASSERT_THROW(service.GetCartBooks(), EmptyRepoError);
 	service.AddToCart("ce");
-	ASSERT_TRUE(service.getCart().size() == 1 && service.getCart()[0] == book1);
+	ASSERT_TRUE(service.GetCartBooks().size() == 1 && service.GetCartBooks()[0] == book1);
 	service.EmptyCart();
-	ASSERT_TRUE(service.getCart().size() == 0);
+	ASSERT_THROW(service.GetCartBooks(), EmptyRepoError);
+}
+
+TEST(BookstoreService, AddRandomBooksToCart)
+{
+	BookstoreService service = BookstoreService();
+	ASSERT_THROW(service.AddRandomBooksToCart(2), EmptyRepoError);
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	ASSERT_THROW(service.AddRandomBooksToCart(-1), ParameterError);
+	service.AddRandomBooksToCart(1);
+	ASSERT_TRUE(service.GetCartBooks().size() == 1);
+	service.AddRandomBooksToCart(2);
+	ASSERT_TRUE(service.GetCartBooks().size() == 3);
 }
 
