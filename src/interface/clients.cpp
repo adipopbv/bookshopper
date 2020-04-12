@@ -168,6 +168,17 @@ void BookstoreClient::SortBooks()
 	this->ListAllBooks();
 }
 
+void BookstoreClient::ListAllCartBooks() const
+{
+	std::vector<Book> booksInCart = this->getBookstoreService().GetCartBooks();
+	std::for_each(booksInCart.begin(), booksInCart.end(), [this](Book book){
+		this->getIO().PrintString("──────────\n");
+		this->PrintBook(book);
+	});
+	this->getIO().PrintString("──────────\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
 void BookstoreClient::EmptyCart()
 {
 	BookstoreService service = this->getBookstoreService();
@@ -179,7 +190,7 @@ void BookstoreClient::EmptyCart()
 
 void BookstoreClient::AddToCart()
 {
-	this->getIO().PrintString("»»Add book\n");
+	this->getIO().PrintString("»»Add book to cart\n");
 	this->getIO().PrintString("  ╚═Book to be added:\n");
 	std::string title = this->getIO().ReadString("    └─Title: ");
 
@@ -189,6 +200,21 @@ void BookstoreClient::AddToCart()
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
 	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+}
+
+void BookstoreClient::AddRandomBooksToCart()
+{
+	this->getIO().PrintString("»»Add random books to cart\n");
+	this->getIO().PrintString("  ╚═Number of books to be added:\n");
+	int count = this->getIO().ReadInt("    └─Books count: ");
+
+	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
+	service.AddRandomBooksToCart(count);
+	this->setBookstoreService(service);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().size()) + ".\n\n");
+
 }
 
 void BookstoreClient::ExitApplication() const
@@ -215,8 +241,10 @@ void BookstoreClient::RunApplication()
 				"  ║ ╠═[6]: Filter books\n" +
 				"  ║ ╚═[7]: Sort books\n" +
 				"  ╚═Shopping cart:\n" +
-				"    ╠═[8]: Empty cart\n" +
-				"    ╚═[9]: Add book to cart\n"
+				"    ╠═[8]: List cart\n" +
+				"    ╠═[9]: Empty cart\n" +
+				"    ╠═[10]: Add book to cart\n" +
+				"    ╚═[11]: Add random books to cart\n"
 			);
 			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
@@ -257,11 +285,19 @@ void BookstoreClient::RunApplication()
 					break;
 
 				case 8:
-					this->EmptyCart();
+					this->ListAllCartBooks();
 					break;
 
 				case 9:
+					this->EmptyCart();
+					break;
+
+				case 10:
 					this->AddToCart();
+					break;
+
+				case 11:
+					this->AddRandomBooksToCart();
 					break;
 	
 				default:
