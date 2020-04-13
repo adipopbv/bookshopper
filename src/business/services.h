@@ -13,27 +13,27 @@ class BookstoreService
 {
 	private:
 		/// The books repository
-		std::vector<Book> booksRepo = std::vector<Book>();
+		Repo<Book> booksRepo = Repo<Book>();
 
 		/// The shopping cart repository
-		std::vector<Book> cart = std::vector<Book>();
+		Repo<Book> cart = Repo<Book>();
 
 	public:
 		/// Library service constructor
-		BookstoreService(const std::vector<Book> &booksRepo = std::vector<Book>(), const std::vector<Book> &cart = std::vector<Book>());
+		BookstoreService(const Repo<Book> &booksRepo = Repo<Book>(), const Repo<Book> &cart = Repo<Book>());
 
 		/// Library service destructor
 		~BookstoreService();
 
 		/// Books repository getter
-		std::vector<Book> getBooksRepo() const { return this->booksRepo; }
+		Repo<Book> getBooksRepo() const { return this->booksRepo; }
 		/// Books repository setter
-		void setBooksRepo(std::vector<Book> const &value) { this->booksRepo = value; }
+		void setBooksRepo(Repo<Book> const &value) { this->booksRepo = value; }
 
-		/// Books repository getter
-		std::vector<Book> getCart() const { return this->cart; }
-		/// Books repository setter
-		void setCart(std::vector<Book> const &value) { this->cart = value; }
+		/// Shopping cart getter
+		Repo<Book> getCart() const { return this->cart; }
+		/// Shopping cart setter
+		void setCart(Repo<Book> const &value) { this->cart = value; }
 
 		/**
 		 * Gets all books from the repo
@@ -62,7 +62,7 @@ class BookstoreService
 		 * @param author The new author of the book
 		 * @param genre The new genre of the book
 		 * @param releaseYear The new release year of the book
-		 * @throws Exception if the search fields are invalid, if the new book is invalid, if it becomes duplicated after the modification or if book was not found
+		 * @throws Exception if the repo is empty, if the search fields are invalid, if the new book is invalid, if it becomes duplicated after the modification or if book was not found
 		 */
 		void ModifyBookInRepo(const std::string &titleSearch, const std::string &authorSearch, const std::string &title = "", const std::string &author = "", const std::string &genre = "", const int &releaseYear = 0);
 
@@ -71,7 +71,7 @@ class BookstoreService
 		 *
 		 * @param titleSearch The title to search by
 		 * @param authorSearch The author to search by
-		 * @throws Exception if the search fields are invalid or if book was not found
+		 * @throws Exception if the repo is empty, if the search fields are invalid or if book was not found
 		 */
 		void DeleteBookFromRepo(const std::string &titleSearch, const std::string &authorSearch);
 
@@ -85,7 +85,7 @@ class BookstoreService
 		 * @returns The first book match from the repo
 		 * @throws Exception if empty repo, if no fields valid or book not found
 		 */
-		Book SearchBook(const std::string &titleSearch, const std::string &authorSearch, const std::string &genreSearch, const int &releaseYearSearch);
+		Book SearchBook(const std::string &titleSearch, const std::string &authorSearch, const std::string &genreSearch, const int &releaseYearSearch) const;
 
 		/**
 		 * Gets books from the repo, filtered by title
@@ -94,7 +94,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by title
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		std::vector<Book> GetFilteredBooks(const std::string &titleFilter);
+		std::vector<Book> GetFilteredBooks(const std::string &titleFilter) const;
 
 		/**
 		 * Gets books from the repo, filtered by release year
@@ -103,7 +103,7 @@ class BookstoreService
 		 * @returns The books repo, filtered by release year
 		 * @throws Exception if there are no books in repo, if filter is invalid or no books remain after filtering
 		 */
-		std::vector<Book> GetFilteredBooks(const int &releaseYearFilter);
+		std::vector<Book> GetFilteredBooks(const int &releaseYearFilter) const;
 
 		/// Sorts the books repo by title
 		void SortBooksByTitle();
@@ -140,3 +140,4 @@ class BookstoreService
 		 */
 		void AddRandomBooksToCart(const int &count);
 };
+
