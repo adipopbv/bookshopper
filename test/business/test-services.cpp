@@ -3,9 +3,9 @@
 
 TEST(BookstoreService, GetBooks)
 {
-	std::vector<Book> books = std::vector<Book>();
+	Repo<Book> books = Repo<Book>();
 	Book book = Book("ceva", "cineva", "careva", 2020);
-	books.push_back(book);
+	books.Add(book);
 	BookstoreService service = BookstoreService();
 	ASSERT_THROW(service.GetBooks()[0], EmptyRepoError);
 	service = BookstoreService(books);
@@ -143,13 +143,13 @@ TEST(BookstoreService, GetCartBooks)
 	BookstoreService service = BookstoreService();
 	service.AddBookToRepo("ce", "se", "intampla", 301);
 	service.AddBookToRepo("vai", "de", "noi", 2020);
-	std::vector<Book> cart = std::vector<Book>();
+	Repo<Book> cart = Repo<Book>();
 	ASSERT_THROW(service.GetCartBooks(), EmptyRepoError);
-	cart.push_back(service.getBooksRepo()[0]);
+	cart.Add(service.getBooksRepo()[0]);
 	service.setCart(cart);
 	ASSERT_TRUE(service.GetCartBooks().size() == 1
 			&& service.GetCartBooks()[0] == book1);
-	cart.push_back(service.getBooksRepo()[1]);
+	cart.Add(service.getBooksRepo()[1]);
 	service.setCart(cart);
 	ASSERT_TRUE(service.GetCartBooks().size() == 2
 			&& service.GetCartBooks()[0] == book1

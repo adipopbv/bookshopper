@@ -6,7 +6,7 @@ TEST(Repo, SubscriptionOperator)
 {
 	Repo<int> repo = Repo<int>();
 	int element = 0;
-	ASSERT_THROW(repo[0], IndexError);
+	ASSERT_THROW(repo[0], EmptyRepoError);
 	repo.Add(element);
 	ASSERT_TRUE(repo[0] == 0);
 	ASSERT_TRUE(repo[0] == element);
@@ -16,7 +16,6 @@ TEST(Repo, SubscriptionOperator)
 	ASSERT_TRUE(repo[0] != element);
 	element = 2;
 	ASSERT_TRUE(repo[0] == 1);
-	repo.FreeRepo();
 }
 
 TEST(Repo, Size)
@@ -30,7 +29,6 @@ TEST(Repo, Size)
 	ASSERT_TRUE(repo.Size() == 2);
 	repo.Add(element3, true);
 	ASSERT_TRUE(repo.Size() == 3);
-	repo.FreeRepo();
 }
 
 TEST(Repo, Empty)
@@ -39,7 +37,6 @@ TEST(Repo, Empty)
 	ASSERT_TRUE(repo.Empty());
 	repo.Add(0);
 	ASSERT_FALSE(repo.Empty());
-	repo.FreeRepo();
 }
 
 TEST(Repo, Swap)
@@ -53,7 +50,6 @@ TEST(Repo, Swap)
 	ASSERT_THROW(repo.Swap(8, -3), IndexError);
 	repo.Swap(0, 1);
 	ASSERT_TRUE(repo[0] == element2 && repo[1] == element1);
-	repo.FreeRepo();
 }
 
 TEST(Repo, Add)
@@ -65,36 +61,34 @@ TEST(Repo, Add)
 	repo.Add(element2);
 	ASSERT_TRUE(repo[0] == element1);
 	ASSERT_TRUE(repo[1] == element2);
-	repo.Add(element3, true);
-	ASSERT_TRUE(repo[0] == element3);
-	ASSERT_TRUE(repo[1] == element1);
-	ASSERT_TRUE(repo[2] == element2);
+	repo.Add(element3);
+	ASSERT_TRUE(repo[0] == element1);
+	ASSERT_TRUE(repo[1] == element2);
+	ASSERT_TRUE(repo[2] == element3);
 	ASSERT_THROW(repo.Add(element4), DuplicateError);
-	repo.FreeRepo();
 }
 
 TEST(Repo, Insert)
 {
 	Repo<int> repo = Repo<int>();
 	int element1 = 1, element2 = 2, element3 = 3, element4 = 4;
-	ASSERT_THROW(repo.Insert(element1, 1), IndexError);
-	repo.Insert(element1, 0);
+	ASSERT_THROW(repo.Insert(1, element1), EmptyRepoError);
+	repo.Add(element1);
 	ASSERT_TRUE(repo[0] == element1);
-	repo.Insert(element2, 1);
-	ASSERT_TRUE(repo[0] == element1);
-	ASSERT_TRUE(repo[1] == element2);
-	repo.Insert(element3, 1);
-	ASSERT_TRUE(repo[0] == element1);
+	repo.Insert(0, element2);
+	ASSERT_TRUE(repo[0] == element2);
+	ASSERT_TRUE(repo[1] == element1);
+	repo.Insert(1, element3);
+	ASSERT_TRUE(repo[0] == element2);
 	ASSERT_TRUE(repo[1] == element3);
-	ASSERT_TRUE(repo[2] == element2);
+	ASSERT_TRUE(repo[2] == element1);
 	ASSERT_THROW(repo.Insert(element3, 2), DuplicateError);
 	ASSERT_THROW(repo.Insert(element4, 4), IndexError);
-	repo.Insert(element4, 0);
+	repo.Insert(0, element4);
 	ASSERT_TRUE(repo[0] == element4);
-	ASSERT_TRUE(repo[1] == element1);
+	ASSERT_TRUE(repo[1] == element2);
 	ASSERT_TRUE(repo[2] == element3);
-	ASSERT_TRUE(repo[3] == element2);
-	repo.FreeRepo();
+	ASSERT_TRUE(repo[3] == element1);
 }
 
 TEST(Repo, Erase)
@@ -110,7 +104,6 @@ TEST(Repo, Erase)
 	ASSERT_TRUE(repo[1] == element3);
 	repo.Erase(0);
 	ASSERT_TRUE(repo[0] == element3);
-	repo.FreeRepo();
 }
 
 TEST(Repo, GetElement)
@@ -122,7 +115,6 @@ TEST(Repo, GetElement)
 	ASSERT_TRUE(repo.GetElement([&element2](int currentElem){ return currentElem == element2; }) == element1);
 	element2 = 2;
 	ASSERT_THROW(repo.GetElement([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
-	repo.FreeRepo();
 }
 
 TEST(Repo, GetIndexOfElement)
@@ -134,5 +126,19 @@ TEST(Repo, GetIndexOfElement)
 	ASSERT_TRUE(repo.GetIndexOfElement([&element2](int currentElem){ return currentElem == element2; }) == 0);
 	element2 = 2;
 	ASSERT_THROW(repo.GetIndexOfElement([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
-	repo.FreeRepo();
 }
+
+TEST(Repo, Sort)
+{
+	Repo<int> repo = Repo<int>();
+	int element1 = 1, element2 = 2, element3 = 3;
+	ASSERT_THROW(repo.Sort([](int first, int second){ return (first < second); }), EmptyRepoError);
+	repo.Add(element2);
+	repo.Add(element3);
+	repo.Add(element1);
+	repo.Sort([](int first, int second){ return (first < second); });
+	ASSERT_TRUE(repo.getElements()[0] == element1
+			&& repo.getElements()[1] == element2
+			&& repo.getElements()[2] == element3);
+}
+
