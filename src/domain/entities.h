@@ -48,6 +48,11 @@ class Book
 		/// Overloading == operator
 		bool operator== (const Book other) const { return this->getTitle() == other.getTitle() && this->getAuthor() == other.getAuthor(); }
 
-		/// Validates itself
+		/**
+		 * Validates the given data as book data
+		 *
+		 * @throws Exception if title, author, genre and/or releaseYear are invalid
+		 */
 		void ValidateData(const std::string title, const std::string author, const std::string genre, const int releaseYear) const;
 };
+

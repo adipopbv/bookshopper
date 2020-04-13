@@ -10,7 +10,7 @@ template <typename ElementType>
 class Repo
 {
 	private:
-		/// Implementation of a simple linked list for the repo
+		/// Implementation of stl vector for the repo
 		std::vector<ElementType> elements = std::vector<ElementType>();
 
 		/**
@@ -30,7 +30,7 @@ class Repo
 		void ValidateExistance(ElementType const &element) const;
 
 		/**
-		 * Ensures that the given element is existent in repo
+		 * Ensures that the given key is valid
 		 *
 		 * @param index The index to be validated
 		 * @throws Exception if index is out of bounds or not the correct type
@@ -44,9 +44,9 @@ class Repo
 		/// Repo destructor
 		~Repo();
 
-		/// elements getter
+		/// Elements getter
 		std::vector<ElementType> getElements() const { return this->elements; }
-		/// elements setter
+		/// Elements setter
 		void setElements(std::vector<ElementType> const &value) { this->elements = value; }
 		
 		/**
@@ -73,7 +73,7 @@ class Repo
 		bool Empty() const;
 
 		/**
-		 * Swaps tow elements
+		 * Swaps two elements
 		 *
 		 * @param first The firs element's index
 		 * @param second The second's element index
@@ -82,10 +82,10 @@ class Repo
 		void Swap(const int &first, const int &second);
 
 		/**
-		 * Adds element pointer to the begining of the repo
+		 * Adds element at the end of the repo
 		 *
 		 * @param element An element
-		 * @param begining Should the adding operation be done at the begining of the list or at the end, defaults to false
+		 * @param validateDuplicate Should the function check for duplicate in repo?
 		 * @throws Exception if element already in repo
 		 */
 		void Add(ElementType const &element, bool const &validateDuplicate = true);
@@ -95,7 +95,7 @@ class Repo
 		 *
 		 * @param index The position for insertion
 		 * @param element The element to be inserted
-		 * @throws Exception if index is out of bounds or if element already in repo
+		 * @throws Exception if index is not valid or if element already in repo
 		 */
 		void Insert(int const &index, ElementType const &element);
 
@@ -103,7 +103,7 @@ class Repo
 		 * Erases the element from the given position
 		 *
 		 * @param index The index of the element to be removed
-		 * @throws Exception if index is out of bounds
+		 * @throws Exception if index is not valid
 		 */
 		void Erase(int const &index);
 
@@ -114,7 +114,7 @@ class Repo
 		 * @returns The searched element
 		 * @throws Exception if repo is empty or element is not found
 		 */
-		ElementType GetElement(std::function<bool (ElementType)> isMatching);
+		ElementType GetElement(std::function<bool (ElementType)> const &isMatching) const;
 
 		/**
 		 * Gets the index of an element from the repo
@@ -136,44 +136,40 @@ class Repo
 template <typename ElementType>
 void Repo<ElementType>::ValidateDuplicate(ElementType const &element) const
 {
+	// search in all elements
 	std::for_each(this->elements.begin(), this->elements.end(), 
 		[&element] (ElementType currentElement)
 		{
+			// if found throw exception
 			if (element == currentElement)
-			{ throw DuplicateError("element already in repo\n"); } // if found throw exception
+			{ throw DuplicateError("element already in repo\n"); }
 		}
 	);
-	/*
-	for (int i = 0; i < this->Size(); i++)
-		if (element == this->operator[](i)) // search for element in repo
-		{ throw DuplicateError("element already in repo\n"); } // if found throw exception
-	*/
 }
 
 template <typename ElementType>
 void Repo<ElementType>::ValidateExistance(ElementType const &element) const
 {
+	// search in all elements
 	std::for_each(this->elements.begin(), this->elements.end(), 
 		[&element] (ElementType currentElement)
 		{
+			// if found it's ok
 			if (element == currentElement)
 			{ return; }
 		}
 	);
-	throw NotFoundError("element not found\n"); // if not found throw exception
-	/*
-	for (int i = 0; i < this->Size(); i++)
-		if (element == this->operator[](i)) // search for element in repo
-		{ return; } // if found, all is good
-	throw NotFoundError("\nelement not found in repository"); // if not found throw exception
-	*/
+	// if not found throw exception
+	throw NotFoundError("element not found\n");
 }
 
 template <typename ElementType>
 void Repo<ElementType>::ValidateIndex(int const &index) const
 {
+	// if empty repo throw exception
 	if (this->Empty())
-	{ throw EmptyRepoError("repo is empty\n"); }
+	{ throw EmptyRepoError("empty repo\n"); }
+	// if index out of bounds throw exception
 	if (index > this->Size() - 1 || index < 0)
 	{ throw IndexError("index out of bounds\n"); }
 }
@@ -181,21 +177,24 @@ void Repo<ElementType>::ValidateIndex(int const &index) const
 template <typename ElementType>
 Repo<ElementType>::Repo()
 {
-	// empty vector
+	// init with empty vector
 	this->elements = std::vector<ElementType>();
 }
 
 template <typename ElementType>
 Repo<ElementType>::~Repo()
 {
-	// empty vector
+	// set to default value (empty vector)
 	this->elements = std::vector<ElementType>();
 }
 
 template <typename ElementType>
 ElementType &Repo<ElementType>::operator[](int const &index)
 {
+	// validate index
 	this->ValidateIndex(index);
+
+	// return the element at index location
 	return this->elements[index];
 }
 
@@ -216,11 +215,15 @@ bool Repo<ElementType>::Empty() const
 template <typename ElementType>
 void Repo<ElementType>::Swap(const int &first, const int &second)
 {
+	// validate first index
 	this->ValidateIndex(first);
+	// validate second index
 	this->ValidateIndex(second);
+	// if indexes are equal throw exception
 	if (first == second)
 	{ throw IndexError("indexes are identical\n"); }
-	// swaping elements
+
+	// swap elements
 	ElementType temp = this->operator[](first);
 	this->operator[](first) = this->operator[](second);
 	this->operator[](second) = temp;
@@ -229,39 +232,44 @@ void Repo<ElementType>::Swap(const int &first, const int &second)
 template <typename ElementType>
 void Repo<ElementType>::Add(ElementType const &element, bool const &validateDuplicate)
 {
-	// validating element
+	// validate element
 	if (validateDuplicate)
 	{ this->ValidateDuplicate(element); }
-	// adding element
+
+	// add element to repo
 	this->elements.push_back(element);
 }
 
 template <typename ElementType>
 void Repo<ElementType>::Insert(int const &index, ElementType const &element)
 {
-	// validating element
+	// validate element
 	this->ValidateDuplicate(element);
-	// validating index
+	// validate index
 	this->ValidateIndex(index);
-	// inserting element at index
+
+	// insert element at index
 	this->elements.insert(this->elements.begin() + index, element);
 }
 
 template <typename ElementType>
 void Repo<ElementType>::Erase(int const &index)
 {
-	// validating index
+	// validate index
 	this->ValidateIndex(index);
-	// erasing the element at index
+
+	// erase the element at index
 	this->elements.erase(this->elements.begin() + index);
 }
 
 template <typename ElementType>
-ElementType Repo<ElementType>::GetElement(std::function<bool(ElementType)> isMatching)
+ElementType Repo<ElementType>::GetElement(std::function<bool(ElementType)> const &isMatching) const
 {
+	// validate repo emptyness
 	if (this->Empty())
 	{ throw EmptyRepoError("empty repo\n"); }
 
+	// search the index of the wanted element
 	int index = -1, count = 0;
 	std::vector<ElementType> vect = this->getElements();
 	std::for_each(vect.begin(), vect.end(), 
@@ -272,17 +280,22 @@ ElementType Repo<ElementType>::GetElement(std::function<bool(ElementType)> isMat
 			count++;
 		}
 	);
+
+	// if found return the value at index
 	if (index != -1)
 	{ return vect[index]; }
+	// if not found throw exception
 	throw NotFoundError("element not found\n");
 }
 
 template <typename ElementType>
 int Repo<ElementType>::GetIndexOfElement(std::function<bool(ElementType)> const &isMatching) const
 {
+	// validate repo emptyness
 	if (this->Empty())
 	{ throw EmptyRepoError("empty repo\n"); }
 
+	// search the index of the wanted element
 	int index = -1, counter = 0;
 	std::vector<ElementType> vect = this->getElements();
 	std::for_each(vect.begin(), vect.end(), 
@@ -293,23 +306,22 @@ int Repo<ElementType>::GetIndexOfElement(std::function<bool(ElementType)> const 
 			counter++;
 		}
 	);
+
+	// if found return the index
 	if (index != -1)
 	{ return index; }
+	// if not found throw exception
 	throw NotFoundError("element not found\n");
-	/*
-	throw NotFoundError("element not found\n");
-	for (int i = 0; i < this->Size(); i++)
-		if (isMatching(this->operator[](i)))
-		{ return i; }
-	throw NotFoundError("\nelement not found in repository");
-	*/
 }
 
 template <typename ElementType>
 void Repo<ElementType>::Sort(std::function<bool (ElementType, ElementType)> const &compareElements)
 {
+	// validate repo emptyness
 	if (this->Empty())
 	{ throw EmptyRepoError("empty repo\n"); }
+
+	// sort the repo using the given compare function
 	std::vector<ElementType> newVector = this->getElements();
 	std::sort(newVector.begin(), newVector.end(), compareElements);
 	this->setElements(newVector);
