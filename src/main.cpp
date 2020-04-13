@@ -8,12 +8,16 @@
 
 auto main() -> int
 {
-	Repo<Book> booksRepo = Repo<Book>(); // the books repository
-	Repo<Book> cart = Repo<Book>(); // the shopping cart
-	BookstoreService bookstoreService = BookstoreService(booksRepo, cart); // the library service
-	BookstoreClient bookstoreClient = BookstoreClient(bookstoreService); // the library client
+	// the books repository
+	Repo<Book> booksRepo = Repo<Book>();
+	// the shopping cart
+	Repo<Book> cart = Repo<Book>();
+	// the bookshop service
+	BookstoreService bookstoreService = BookstoreService(booksRepo, cart);
+	// the bookshop client
+	BookstoreClient bookstoreClient = BookstoreClient(bookstoreService);
 
-	bookstoreClient.RunApplication(); // application loop
-
+	// start the application
+	bookstoreClient.RunApplication();
 	return 0;
 }

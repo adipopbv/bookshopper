@@ -30,9 +30,9 @@ class BookstoreService
 		/// Books repository setter
 		void setBooksRepo(Repo<Book> const &value) { this->booksRepo = value; }
 
-		/// Books repository getter
+		/// Shopping cart getter
 		Repo<Book> getCart() const { return this->cart; }
-		/// Books repository setter
+		/// Shopping cart setter
 		void setCart(Repo<Book> const &value) { this->cart = value; }
 
 		/**
@@ -62,7 +62,7 @@ class BookstoreService
 		 * @param author The new author of the book
 		 * @param genre The new genre of the book
 		 * @param releaseYear The new release year of the book
-		 * @throws Exception if the search fields are invalid, if the new book is invalid, if it becomes duplicated after the modification or if book was not found
+		 * @throws Exception if the repo is empty, if the search fields are invalid, if the new book is invalid, if it becomes duplicated after the modification or if book was not found
 		 */
 		void ModifyBookInRepo(const std::string &titleSearch, const std::string &authorSearch, const std::string &title = "", const std::string &author = "", const std::string &genre = "", const int &releaseYear = 0);
 
@@ -71,7 +71,7 @@ class BookstoreService
 		 *
 		 * @param titleSearch The title to search by
 		 * @param authorSearch The author to search by
-		 * @throws Exception if the search fields are invalid or if book was not found
+		 * @throws Exception if the repo is empty, if the search fields are invalid or if book was not found
 		 */
 		void DeleteBookFromRepo(const std::string &titleSearch, const std::string &authorSearch);
 
