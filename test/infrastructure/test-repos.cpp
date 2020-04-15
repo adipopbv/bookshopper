@@ -2,18 +2,18 @@
 #include "../../src/infrastructure/repos.h"
 #include "../../src/domain/exceptions.h"
 
-TEST(Repo, SubscriptionOperator)
+TEST(Repo, OperatorSubscription)
 {
 	Repo<int> repo = Repo<int>();
 	int element = 0;
 	ASSERT_THROW(repo[0], EmptyRepoError);
 	repo.Add(element);
-	ASSERT_TRUE(repo[0] == 0);
-	ASSERT_TRUE(repo[0] == element);
+	ASSERT_TRUE(repo[0] == 0
+			&& repo[0] == element);
 	ASSERT_THROW(repo[1], IndexError);
 	repo[0] = 1;
-	ASSERT_TRUE(repo[0] == 1);
-	ASSERT_TRUE(repo[0] != element);
+	ASSERT_TRUE(repo[0] == 1
+			&& repo[0] != element);
 	element = 2;
 	ASSERT_TRUE(repo[0] == 1);
 }
@@ -45,11 +45,14 @@ TEST(Repo, Swap)
 	int element1 = 1, element2 = 2;
 	repo.Add(element1);
 	repo.Add(element2);
-	ASSERT_TRUE(repo[0] == element1 && repo[1] == element2);
+	ASSERT_TRUE(repo[0] == element1
+			&& repo[1] == element2);
 	ASSERT_THROW(repo.Swap(0, 3), IndexError);
+	ASSERT_THROW(repo.Swap(0, 0), IndexError);
 	ASSERT_THROW(repo.Swap(8, -3), IndexError);
 	repo.Swap(0, 1);
-	ASSERT_TRUE(repo[0] == element2 && repo[1] == element1);
+	ASSERT_TRUE(repo[0] == element2
+			&& repo[1] == element1);
 }
 
 TEST(Repo, Add)
@@ -59,12 +62,12 @@ TEST(Repo, Add)
 	repo.Add(element1);
 	ASSERT_TRUE(repo[0] == element1);
 	repo.Add(element2);
-	ASSERT_TRUE(repo[0] == element1);
-	ASSERT_TRUE(repo[1] == element2);
+	ASSERT_TRUE(repo[0] == element1
+			&& repo[1] == element2);
 	repo.Add(element3);
-	ASSERT_TRUE(repo[0] == element1);
-	ASSERT_TRUE(repo[1] == element2);
-	ASSERT_TRUE(repo[2] == element3);
+	ASSERT_TRUE(repo[0] == element1
+			&& repo[1] == element2
+			&& repo[2] == element3);
 	ASSERT_THROW(repo.Add(element4), DuplicateError);
 }
 
@@ -76,19 +79,19 @@ TEST(Repo, Insert)
 	repo.Add(element1);
 	ASSERT_TRUE(repo[0] == element1);
 	repo.Insert(0, element2);
-	ASSERT_TRUE(repo[0] == element2);
-	ASSERT_TRUE(repo[1] == element1);
+	ASSERT_TRUE(repo[0] == element2
+			&& repo[1] == element1);
 	repo.Insert(1, element3);
-	ASSERT_TRUE(repo[0] == element2);
-	ASSERT_TRUE(repo[1] == element3);
-	ASSERT_TRUE(repo[2] == element1);
-	ASSERT_THROW(repo.Insert(element3, 2), DuplicateError);
-	ASSERT_THROW(repo.Insert(element4, 4), IndexError);
+	ASSERT_TRUE(repo[0] == element2
+			&& repo[1] == element3
+			&& repo[2] == element1);
+	ASSERT_THROW(repo.Insert(2, element3), DuplicateError);
+	ASSERT_THROW(repo.Insert(4, element4), IndexError);
 	repo.Insert(0, element4);
-	ASSERT_TRUE(repo[0] == element4);
-	ASSERT_TRUE(repo[1] == element2);
-	ASSERT_TRUE(repo[2] == element3);
-	ASSERT_TRUE(repo[3] == element1);
+	ASSERT_TRUE(repo[0] == element4
+			&& repo[1] == element2
+			&& repo[2] == element3
+			&& repo[3] == element1);
 }
 
 TEST(Repo, Erase)
@@ -100,32 +103,23 @@ TEST(Repo, Erase)
 	repo.Add(element3);
 	ASSERT_THROW(repo.Erase(3), IndexError);
 	repo.Erase(1);
-	ASSERT_TRUE(repo[0] == element1);
-	ASSERT_TRUE(repo[1] == element3);
+	ASSERT_TRUE(repo[0] == element1
+			&& repo[1] == element3);
 	repo.Erase(0);
 	ASSERT_TRUE(repo[0] == element3);
+	repo.Erase(0);
+	ASSERT_TRUE(repo.Size() == 0);
 }
 
-TEST(Repo, GetElement)
+TEST(Repo, FindIf)
 {
 	Repo<int> repo = Repo<int>();
 	int element1 = 1, element2 = 1;
-	ASSERT_THROW(repo.GetElement([](int currentElem){ return true; }), EmptyRepoError);
+	ASSERT_THROW(repo.FindIf([](int currentElem){ return true; }), EmptyRepoError);
 	repo.Add(element1);
-	ASSERT_TRUE(repo.GetElement([&element2](int currentElem){ return currentElem == element2; }) == element1);
+	ASSERT_TRUE(repo.FindIf([&element2](int currentElem){ return currentElem == element2; }) == 0);
 	element2 = 2;
-	ASSERT_THROW(repo.GetElement([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
-}
-
-TEST(Repo, GetIndexOfElement)
-{
-	Repo<int> repo = Repo<int>();
-	int element1 = 1, element2 = 1;
-	ASSERT_THROW(repo.GetIndexOfElement([](int currentElem){ return true; }), EmptyRepoError);
-	repo.Add(element1);
-	ASSERT_TRUE(repo.GetIndexOfElement([&element2](int currentElem){ return currentElem == element2; }) == 0);
-	element2 = 2;
-	ASSERT_THROW(repo.GetIndexOfElement([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
+	ASSERT_THROW(repo.FindIf([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
 }
 
 TEST(Repo, Sort)
