@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
 
-#include "business/services.h"
-#include "domain/entities.h"
-#include "infrastructure/repos.h"
-#include "interface/clients.h"
+#include "./business/services.h"
+#include "./domain/entities.h"
+#include "./infrastructure/repos.h"
+#include "./interface/clients.h"
 
 auto main() -> int
 {
@@ -21,3 +21,4 @@ auto main() -> int
 	bookstoreClient.RunApplication();
 	return 0;
 }
+

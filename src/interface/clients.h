@@ -75,3 +75,4 @@ class BookstoreClient
 		/// Main application loop holder
 		void RunApplication();
 };
+

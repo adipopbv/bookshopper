@@ -21,7 +21,7 @@ std::vector<Book> BookstoreService::GetBooks() const
 	{ throw EmptyRepoError("empty repo\n"); }
 
 	// return all books
-	return this->getBooksRepo().getElements();
+	return this->getBooksRepo().toVector();
 }
 
 void BookstoreService::AddBookToRepo(const std::string &title, const std::string &author, const std::string &genre, const int &releaseYear)
@@ -45,14 +45,14 @@ void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const st
 	Repo<Book> newRepo = this->getBooksRepo();
 
 	// get the old book
-	Book oldBook = newRepo.GetElement(
+	int oldBookIndex = newRepo.FindIf(
 		[&titleSearch, &authorSearch] (Book currentBook)
 		{ 
 			return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch);
 		}
 	);
 	// get a new book from the old values
-	Book newBook = oldBook;
+	Book newBook = newRepo[oldBookIndex];
 
 	// change wanted values of the new book
 	if (!title.empty())
@@ -66,20 +66,13 @@ void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const st
 	// validate new data
 	newBook.ValidateData(newBook.getTitle(), newBook.getAuthor(), newBook.getGenre(), newBook.getReleaseYear());
 
-	// get the position of the book to be modified
-	int position = newRepo.GetIndexOfElement(
-		[&oldBook] (Book currentBook)
-		{
-			return (currentBook == oldBook);
-		}
-	);
 	// remove the old book
-	newRepo.Erase(position);
+	newRepo.Erase(oldBookIndex);
 	// insert the new book
-	if (position == newRepo.Size())
+	if (oldBookIndex >= newRepo.Size())
 	{ newRepo.Add(newBook); }
 	else
-	{ newRepo.Insert(position, newBook); } 
+	{ newRepo.Insert(oldBookIndex, newBook); } 
 	this->setBooksRepo(newRepo);
 }
 
@@ -93,22 +86,15 @@ void BookstoreService::DeleteBookFromRepo(const std::string &titleSearch, const 
 	Repo<Book> newRepo = this->getBooksRepo();
 
 	// get the old book
-	Book oldBook = newRepo.GetElement(
+	int oldBookIndex = newRepo.FindIf(
 		[&titleSearch, &authorSearch] (Book currentBook)
-		{
+		{ 
 			return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch);
 		}
 	);
 
-	//get the position of deletion
-	int positon = newRepo.GetIndexOfElement(
-		[&oldBook] (Book currentBook)
-		{
-			return (currentBook == oldBook);
-		}
-	);
 	// remove the old book
-	newRepo.Erase(positon);
+	newRepo.Erase(oldBookIndex);
 	this->setBooksRepo(newRepo);
 }
 
@@ -122,7 +108,7 @@ Book BookstoreService::SearchBook(const std::string &titleSearch, const std::str
 	Repo<Book> repo = this->getBooksRepo();
 
 	// search the book
-	Book searchedBook = repo.GetElement(
+	int searchedBookIndex = repo.FindIf(
 		[&titleSearch, &authorSearch, &genreSearch, &releaseYearSearch] (Book currentBook)
 		{
 			bool found = true;
@@ -141,7 +127,7 @@ Book BookstoreService::SearchBook(const std::string &titleSearch, const std::str
 			return found;
 		}
 	);
-	return searchedBook;
+	return repo[searchedBookIndex];
 }
 
 std::vector<Book> BookstoreService::GetFilteredBooks(const std::string &titleFilter) const
@@ -154,7 +140,7 @@ std::vector<Book> BookstoreService::GetFilteredBooks(const std::string &titleFil
 	{ throw EmptyRepoError("empty repo\n"); }
 
 	// make a clone of the repo values
-	std::vector<Book> repoValues = this->getBooksRepo().getElements();
+	std::vector<Book> repoValues = this->getBooksRepo().toVector();
 	// make a new vector to put all needed books into
 	std::vector<Book> filteredValues(repoValues.size());
 
@@ -187,7 +173,7 @@ std::vector<Book> BookstoreService::GetFilteredBooks(const int &releaseYearFilte
 	{ throw EmptyRepoError("the repository is empty\n"); }
 
 	// make a clone of the repo values
-	std::vector<Book> repoValues = this->getBooksRepo().getElements();
+	std::vector<Book> repoValues = this->getBooksRepo().toVector();
 	// make a new vector to put all needed books into
 	std::vector<Book> filteredValues(repoValues.size());
 
@@ -264,7 +250,7 @@ std::vector<Book> BookstoreService::GetCartBooks() const
 	{ throw EmptyRepoError("empty cart\n"); }
 
 	// return all cart books
-	return this->getCart().getElements();
+	return this->getCart().toVector();
 }
 
 void BookstoreService::EmptyCart()
@@ -287,20 +273,20 @@ void BookstoreService::AddToCart(const std::string &title)
 	Repo<Book> cart = this->getCart();
 
 	// find the first book with that title
-	Book book = repo.GetElement(
+	int bookIndex = repo.FindIf(
 		[&title] (Book currentBook)
 		{
 			return (currentBook.getTitle() == title);
 		}
 	);
 	// add found book to cart
-	cart.Add(book, false);
+	cart.Add(repo[bookIndex], false);
 
 	// update original cart
 	this->setCart(cart);
 }
 
-void BookstoreService::AddRandomBooksToCart(const int &count)
+void BookstoreService::AddRandomBooksToCart(int const &count)
 {
 	// throw exception if repo empty
 	if (this->getBooksRepo().Empty())
