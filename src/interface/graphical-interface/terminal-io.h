@@ -37,3 +37,4 @@ class TerminalIO
 		 */
 		void PrintString(std::string const &message) const;
 };
+
