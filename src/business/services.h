@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <algorithm>
 #include <random>
+#include <string>
+#include <vector>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"

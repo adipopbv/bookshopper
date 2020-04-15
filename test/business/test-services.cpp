@@ -19,8 +19,8 @@ TEST(BookstoreService, AddBookToRepo)
 	BookstoreService service = BookstoreService();
 	service.AddBookToRepo("ceva", "cineva", "careva", 2020);
 	service.AddBookToRepo("ce", "se", "intampla", 301);
-	ASSERT_TRUE(service.GetBooks()[0] == book1);
-	ASSERT_TRUE(service.GetBooks()[1] == book2);
+	ASSERT_TRUE(service.GetBooks()[0] == book1
+			&& service.GetBooks()[1] == book2);
 	ASSERT_THROW(service.AddBookToRepo("ce", "se", "petrece", 123), DuplicateError);
 	ASSERT_THROW(service.AddBookToRepo("", "", "", -3), ValidationError);
 	ASSERT_TRUE(service.GetBooks().size() == 2);
@@ -39,8 +39,9 @@ TEST(BookstoreService, ModifyBookInRepo)
 	ASSERT_THROW(service.ModifyBookInRepo("", "a", "", "", "", -3), SearchFieldsError);
 	ASSERT_THROW(service.ModifyBookInRepo("haa", "yaa", "", "", "", 1), NotFoundError);
 	service.ModifyBookInRepo("ceva", "cineva", "vai", "de", "noi", 2020);
-	ASSERT_TRUE(service.GetBooks()[0] == book3);
-	ASSERT_TRUE(service.GetBooks().size() == 2);
+	ASSERT_TRUE(service.GetBooks()[0] == book3
+			&& service.GetBooks().size() == 2);
+	service.ModifyBookInRepo("vai", "de", "", "", "noi", 2020);
 }
 
 TEST(BookstoreService, DeleteBookFromRepo)
@@ -53,8 +54,8 @@ TEST(BookstoreService, DeleteBookFromRepo)
 	ASSERT_THROW(service.DeleteBookFromRepo("a", ""), SearchFieldsError);
 	ASSERT_THROW(service.DeleteBookFromRepo("a", "b"), NotFoundError);
 	service.DeleteBookFromRepo("ceva", "cineva");
-	ASSERT_TRUE(service.GetBooks()[0] == book2);
-	ASSERT_TRUE(service.GetBooks().size() == 1);
+	ASSERT_TRUE(service.GetBooks()[0] == book2
+			&& service.GetBooks().size() == 1);
 }
 
 TEST(BookstoreService, SearchBook)
@@ -66,8 +67,8 @@ TEST(BookstoreService, SearchBook)
 	service.AddBookToRepo("ceva", "se", "intampla", 301);
 	ASSERT_THROW(service.SearchBook("", "", "", -1), SearchFieldsError);
 	ASSERT_THROW(service.SearchBook("a", "b", "c", 1), NotFoundError);
-	ASSERT_TRUE(service.SearchBook("ceva", "", "", -1) == book1);
-	ASSERT_TRUE(service.SearchBook("ceva", "", "intampla", -1) == book2);
+	ASSERT_TRUE(service.SearchBook("ceva", "", "", -1) == book1
+			&& service.SearchBook("ceva", "", "intampla", -1) == book2);
 }
 
 TEST(BookstoreService, GetFilteredBooks)
