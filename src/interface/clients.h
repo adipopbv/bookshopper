@@ -62,6 +62,9 @@ class BookstoreClient
 		/// Adds random books to the cart
 		void AddRandomBooksToCart();
 
+		/// Saves the cart to csv file
+		void SaveCartToFile();
+
 		/// Exits application
 		void ExitApplication() const;
 

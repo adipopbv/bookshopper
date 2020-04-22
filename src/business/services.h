@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
 #include <random>
 #include <string>
 #include <vector>
@@ -139,5 +140,13 @@ class BookstoreService
 		 * @throws Exception if count is not valid or repo is empty
 		 */
 		void AddRandomBooksToCart(const int &count);
+
+		/**
+		 * Saves the shopping cart to cvs file
+		 *
+		 * @param fileName The name of the file
+		 * @throws Exception if repo is empty
+		 */
+		void SaveCartToFile(const std::string &fileName) const;
 };
 
