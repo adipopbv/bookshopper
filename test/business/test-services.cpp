@@ -207,3 +207,22 @@ TEST(BookstoreService, AddRandomBooksToCart)
 	ASSERT_TRUE(service.GetCartBooks().size() == 3);
 }
 
+TEST(BookstoreService, SaveCartToFile)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	std::string fileName = "test-file.csv";
+	service.SaveCartToFile(fileName);
+	std::ifstream fin(fileName);
+	std::string fileString;
+	fin >> fileString;
+	ASSERT_TRUE(fileString == "ce,se,intampla,301");
+	fin >> fileString;
+	ASSERT_TRUE(fileString == "vai,de,noi,2020");
+	fin.close();
+	remove(fileName.c_str());
+}
+
