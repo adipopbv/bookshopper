@@ -214,7 +214,18 @@ void BookstoreClient::AddRandomBooksToCart()
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
 	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+}
 
+void BookstoreClient::SaveCartToFile()
+{
+	this->getIO().PrintString("»»Save cart to file\n");
+	this->getIO().PrintString("  ╚═Select file:\n");
+	std::string fileName = this->getIO().ReadString("    └─Name: ");
+
+	this->getIO().PrintString("\n");
+	this->getBookstoreService().SaveCartToFile(fileName);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
 }
 
 void BookstoreClient::ExitApplication() const
@@ -244,7 +255,8 @@ void BookstoreClient::RunApplication()
 				"    ╠═[8]: List cart\n" +
 				"    ╠═[9]: Empty cart\n" +
 				"    ╠═[10]: Add book to cart\n" +
-				"    ╚═[11]: Add random books to cart\n"
+				"    ╠═[11]: Add random books to cart\n" +
+				"    ╚═[12]: Save cart to file\n"
 			);
 			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
@@ -298,6 +310,10 @@ void BookstoreClient::RunApplication()
 
 				case 11:
 					this->AddRandomBooksToCart();
+					break;
+
+				case 12:
+					this->SaveCartToFile();
 					break;
 	
 				default:
