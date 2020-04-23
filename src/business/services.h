@@ -2,13 +2,18 @@
 
 #include <algorithm>
 #include <fstream>
+#include <memory>
 #include <random>
+#include <stack>
 #include <string>
 #include <vector>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"
+#include "../domain/operations.h"
 #include "../infrastructure/repos.h"
+
+class Operation;
 
 class BookstoreService
 {
@@ -18,6 +23,9 @@ class BookstoreService
 
 		/// The shopping cart repository
 		Repo<Book> cart = Repo<Book>();
+
+		/// Operations history
+		std::stack<std::shared_ptr<Operation>> operationsHistory = std::stack<std::shared_ptr<Operation>>();
 
 	public:
 		/// Library service constructor
@@ -114,6 +122,13 @@ class BookstoreService
 
 		/// Sorts the books repo by release year and genre
 		void SortBooksByReleaseYearAndGenre();
+
+		/**
+		 * Undoes the last basic operation
+		 *
+		 * @throws Exception if already at oldest change
+		 */
+		void UndoOperation();
 
 		/**
 		 * Gets all books from the cart
