@@ -65,3 +65,17 @@ class ParameterError: public AppException
 		ParameterError(std::string const message) :AppException(message) { }
 };
 
+class FileError: public AppException
+{
+	public:
+		/// Exception constructor
+		FileError(std::string const message) :AppException(message) { }
+};
+
+class EmptyStackError: public AppException
+{
+	public:
+		/// Exception constructor
+		EmptyStackError(std::string const message) :AppException(message) { }
+};
+

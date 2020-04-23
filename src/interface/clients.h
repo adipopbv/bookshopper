@@ -50,6 +50,9 @@ class BookstoreClient
 		/// Sorts books by title, author or release year and genre
 		void SortBooks();
 
+		/// Undoes the last basic operation
+		void UndoOperation();
+
 		/// Lists all books in the cart
 		void ListAllCartBooks() const;
 
@@ -61,6 +64,9 @@ class BookstoreClient
 
 		/// Adds random books to the cart
 		void AddRandomBooksToCart();
+
+		/// Saves the cart to csv file
+		void SaveCartToFile();
 
 		/// Exits application
 		void ExitApplication() const;

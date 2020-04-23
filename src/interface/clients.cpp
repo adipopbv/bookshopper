@@ -168,6 +168,37 @@ void BookstoreClient::SortBooks()
 	this->ListAllBooks();
 }
 
+void BookstoreClient::UndoOperation()
+{
+	this->getIO().PrintString("»»Undo last operation\n");
+	this->getIO().PrintString("  ╚═Are you sure?\n");
+	this->getIO().PrintString("    ╠═[1]: Yes\n");
+	this->getIO().PrintString("    ╚═[2]: No\n");
+
+	this->getIO().PrintString("\n");
+	int option = this->getIO().ReadInt("»Enter option: ");
+	this->getIO().PrintString("\n");
+	BookstoreService service = this->getBookstoreService();
+	switch (option)
+	{
+		case 1:
+			service.UndoOperation();
+			this->setBookstoreService(service);
+			this->getIO().PrintString("»Operation succesful!\n\n");
+			break;
+
+		case 2:
+			this->getIO().PrintString("»Operation aborted!\n\n");
+			return;
+			break;
+
+		default:
+			this->getIO().PrintString("»Invalid command!\n\n");
+			return;
+			break;
+	}
+}
+
 void BookstoreClient::ListAllCartBooks() const
 {
 	std::vector<Book> booksInCart = this->getBookstoreService().GetCartBooks();
@@ -214,7 +245,18 @@ void BookstoreClient::AddRandomBooksToCart()
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
 	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+}
 
+void BookstoreClient::SaveCartToFile()
+{
+	this->getIO().PrintString("»»Save cart to file\n");
+	this->getIO().PrintString("  ╚═Select file:\n");
+	std::string fileName = this->getIO().ReadString("    └─Name: ");
+
+	this->getIO().PrintString("\n");
+	this->getBookstoreService().SaveCartToFile(fileName);
+	this->getIO().PrintString("»Operation succesful!\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
 }
 
 void BookstoreClient::ExitApplication() const
@@ -239,12 +281,14 @@ void BookstoreClient::RunApplication()
 				"  ║ ╠═[4]: Delete book\n" +
 				"  ║ ╠═[5]: Search book\n" +
 				"  ║ ╠═[6]: Filter books\n" +
-				"  ║ ╚═[7]: Sort books\n" +
+				"  ║ ╠═[7]: Sort books\n" +
+				"  ║ ╚═[8]: Undo operation\n" +
 				"  ╚═Shopping cart:\n" +
-				"    ╠═[8]: List cart\n" +
-				"    ╠═[9]: Empty cart\n" +
-				"    ╠═[10]: Add book to cart\n" +
-				"    ╚═[11]: Add random books to cart\n"
+				"    ╠═[9]: List cart\n" +
+				"    ╠═[10]: Empty cart\n" +
+				"    ╠═[11]: Add book to cart\n" +
+				"    ╠═[12]: Add random books to cart\n" +
+				"    ╚═[13]: Save cart to file\n"
 			);
 			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
@@ -285,19 +329,27 @@ void BookstoreClient::RunApplication()
 					break;
 
 				case 8:
-					this->ListAllCartBooks();
+					this->UndoOperation();
 					break;
 
 				case 9:
-					this->EmptyCart();
+					this->ListAllCartBooks();
 					break;
 
 				case 10:
-					this->AddToCart();
+					this->EmptyCart();
 					break;
 
 				case 11:
+					this->AddToCart();
+					break;
+
+				case 12:
 					this->AddRandomBooksToCart();
+					break;
+
+				case 13:
+					this->SaveCartToFile();
 					break;
 	
 				default:

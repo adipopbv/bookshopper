@@ -33,6 +33,9 @@ void BookstoreService::AddBookToRepo(const std::string &title, const std::string
 	Repo<Book> newRepo = this->getBooksRepo();
 	newRepo.Add(book);
 	this->setBooksRepo(newRepo);
+
+	// adding operation to history
+	this->operationsHistory.push(std::make_shared<AddOperation>(book));
 }
 
 void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const std::string &authorSearch, const std::string &title, const std::string &author, const std::string &genre, const int &releaseYear)
@@ -51,9 +54,9 @@ void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const st
 			return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch);
 		}
 	);
+	Book oldBook = newRepo[oldBookIndex];
 	// get a new book from the old values
-	Book newBook = newRepo[oldBookIndex];
-
+	Book newBook = oldBook;
 	// change wanted values of the new book
 	if (!title.empty())
 	{ newBook.setTitle(title); }
@@ -74,6 +77,9 @@ void BookstoreService::ModifyBookInRepo(const std::string &titleSearch, const st
 	else
 	{ newRepo.Insert(oldBookIndex, newBook); } 
 	this->setBooksRepo(newRepo);
+
+	// adding operation to history
+	this->operationsHistory.push(std::make_shared<ModifyOperation>(oldBook, newBook));
 }
 
 void BookstoreService::DeleteBookFromRepo(const std::string &titleSearch, const std::string &authorSearch)
@@ -92,10 +98,14 @@ void BookstoreService::DeleteBookFromRepo(const std::string &titleSearch, const 
 			return (currentBook.getTitle() == titleSearch && currentBook.getAuthor() == authorSearch);
 		}
 	);
+	Book oldBook = newRepo[oldBookIndex];
 
 	// remove the old book
 	newRepo.Erase(oldBookIndex);
 	this->setBooksRepo(newRepo);
+
+	// adding operation to history
+	this->operationsHistory.push(std::make_shared<DeleteOperation>(oldBook));
 }
 
 Book BookstoreService::SearchBook(const std::string &titleSearch, const std::string &authorSearch, const std::string &genreSearch, const int &releaseYearSearch) const
@@ -243,6 +253,14 @@ void BookstoreService::SortBooksByReleaseYearAndGenre()
 	this->setBooksRepo(repo);
 }
 
+void BookstoreService::UndoOperation()
+{
+	if (this->operationsHistory.size() <= 0)
+		throw EmptyStackError("already at oldest change\n");
+	this->operationsHistory.top()->UndoOperation(&this->booksRepo);
+	this->operationsHistory.pop();
+}
+
 std::vector<Book> BookstoreService::GetCartBooks() const 
 {
 	// throw exception if empty cart
@@ -311,5 +329,17 @@ void BookstoreService::AddRandomBooksToCart(int const &count)
 	}
 	// update original repo
 	this->setCart(cart);
+}
+
+void BookstoreService::SaveCartToFile(const std::string &fileName) const
+{
+	std::ofstream fout(fileName); 
+
+	for (Book book : this->GetBooks())
+	{
+		fout << book.getTitle() << "," << book.getAuthor() << "," << book.getGenre() << "," << std::to_string(book.getReleaseYear()) << "\n";
+	}
+
+	fout.close();
 }
 

@@ -1,13 +1,19 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
+#include <memory>
 #include <random>
+#include <stack>
 #include <string>
 #include <vector>
 
 #include "../domain/entities.h"
 #include "../domain/exceptions.h"
+#include "../domain/operations.h"
 #include "../infrastructure/repos.h"
+
+class Operation;
 
 class BookstoreService
 {
@@ -17,6 +23,9 @@ class BookstoreService
 
 		/// The shopping cart repository
 		Repo<Book> cart = Repo<Book>();
+
+		/// Operations history
+		std::stack<std::shared_ptr<Operation>> operationsHistory = std::stack<std::shared_ptr<Operation>>();
 
 	public:
 		/// Library service constructor
@@ -115,6 +124,13 @@ class BookstoreService
 		void SortBooksByReleaseYearAndGenre();
 
 		/**
+		 * Undoes the last basic operation
+		 *
+		 * @throws Exception if already at oldest change
+		 */
+		void UndoOperation();
+
+		/**
 		 * Gets all books from the cart
 		 *
 		 * @throws Exception if empty cart
@@ -139,5 +155,13 @@ class BookstoreService
 		 * @throws Exception if count is not valid or repo is empty
 		 */
 		void AddRandomBooksToCart(const int &count);
+
+		/**
+		 * Saves the shopping cart to cvs file
+		 *
+		 * @param fileName The name of the file
+		 * @throws Exception if repo is empty
+		 */
+		void SaveCartToFile(const std::string &fileName) const;
 };
 

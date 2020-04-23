@@ -68,13 +68,13 @@ A book has some fields: _title_, _author_, _genre_, _release year_ and is uniqel
 >    * Author
 >    * Release year and genre
 
-> 6. Shopping cart operations:
+> 6. Undo add/modify/delete book operations
+
+> 7. Shopping cart operations:
 >    * List books in cart
 >    * Empty the shopping cart
 >    * Add book to cart (by title)
 >    * Add random books to cart
->    * \*Export cart as CVS
-
-__\*__ = Not yet implemented. 
+>    * Export cart as CVS
 
 A more elaborate manual will be added to the [wiki](https://github.com/adipopbv/bookshopper/wiki) if decided necessary.
