@@ -72,3 +72,10 @@ class FileError: public AppException
 		FileError(std::string const message) :AppException(message) { }
 };
 
+class EmptyStackError: public AppException
+{
+	public:
+		/// Exception constructor
+		EmptyStackError(std::string const message) :AppException(message) { }
+};
+

@@ -137,6 +137,36 @@ TEST(BookstoreService, SortBooksByReleaseYearAndGenre)
 			&& service.GetBooks()[2] == book2);
 }
 
+TEST(BookstoreService, UndoOperation)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	Book book3 = Book("ceva", "se", "intampla", 1);
+	BookstoreService service = BookstoreService();
+	ASSERT_THROW(service.UndoOperation(), EmptyStackError);
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	ASSERT_TRUE(service.GetBooks()[0] == book1
+			&& service.GetBooks()[1] == book2);
+	service.DeleteBookFromRepo("vai", "de");
+	service.ModifyBookInRepo("ce", "se", "ceva", "", "", 1);
+	ASSERT_TRUE(service.GetBooks().size() == 1
+			&& service.GetBooks()[0] == book3);
+	service.UndoOperation();
+	ASSERT_TRUE(service.GetBooks().size() == 1
+			&& service.GetBooks()[0] == book1);
+	service.UndoOperation();
+	ASSERT_TRUE(service.GetBooks().size() == 2
+			&& service.GetBooks()[0] == book1
+			&& service.GetBooks()[1] == book2);
+	service.UndoOperation();
+	ASSERT_TRUE(service.GetBooks().size() == 1
+			&& service.GetBooks()[0] == book1);
+	service.UndoOperation();
+	ASSERT_THROW(service.GetBooks(), EmptyRepoError);
+	ASSERT_THROW(service.UndoOperation(), EmptyStackError);
+}
+
 TEST(BookstoreService, GetCartBooks)
 {
 	Book book1 = Book("ce", "se", "intampla", 301);

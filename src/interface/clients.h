@@ -50,6 +50,9 @@ class BookstoreClient
 		/// Sorts books by title, author or release year and genre
 		void SortBooks();
 
+		/// Undoes the last basic operation
+		void UndoOperation();
+
 		/// Lists all books in the cart
 		void ListAllCartBooks() const;
 
