@@ -19,30 +19,43 @@ class BookstoreService
 {
 	private:
 		/// The books repository
-		Repo<Book> booksRepo = Repo<Book>();
+		std::shared_ptr<Repo<Book>> booksRepo;
 
 		/// The shopping cart repository
-		Repo<Book> cart = Repo<Book>();
+		std::shared_ptr<Repo<Book>> cart;
 
 		/// Operations history
 		std::stack<std::shared_ptr<Operation>> operationsHistory = std::stack<std::shared_ptr<Operation>>();
 
 	public:
 		/// Library service constructor
-		BookstoreService(const Repo<Book> &booksRepo = Repo<Book>(), const Repo<Book> &cart = Repo<Book>());
+		BookstoreService(std::shared_ptr<Repo<Book>> const &booksRepo = std::make_shared<DictRepo<Book>>(), std::shared_ptr<Repo<Book>> const &cart = std::make_shared<DictRepo<Book>>());
 
 		/// Library service destructor
 		~BookstoreService();
 
 		/// Books repository getter
-		Repo<Book> getBooksRepo() const { return this->booksRepo; }
+		std::shared_ptr<Repo<Book>> getBooksRepo() const 
+		{
+			// making a copy of the repo and returning it
+			std::shared_ptr<Repo<Book>> repoCopy = std::make_shared<DictRepo<Book>>();
+			repoCopy->setElements(this->booksRepo->getElements());
+			return repoCopy;
+		}
 		/// Books repository setter
-		void setBooksRepo(Repo<Book> const &value) { this->booksRepo = value; }
+		void setBooksRepo(std::shared_ptr<Repo<Book>> const &value) { this->booksRepo = value; }
 
 		/// Shopping cart getter
-		Repo<Book> getCart() const { return this->cart; }
+		std::shared_ptr<Repo<Book>> getCart() const 
+		{
+			// making a copy of the cart and returning it
+			std::shared_ptr<Repo<Book>> cartCopy = std::make_shared<DictRepo<Book>>();
+			cartCopy->setElements(this->cart->getElements());
+			return cartCopy;
+		}
+
 		/// Shopping cart setter
-		void setCart(Repo<Book> const &value) { this->cart = value; }
+		void setCart(std::shared_ptr<Repo<Book>> const &value) { this->cart = value; }
 
 		/**
 		 * Gets all books from the repo
@@ -133,6 +146,7 @@ class BookstoreService
 		/**
 		 * Gets all books from the cart
 		 *
+		 * @returns All books from cart
 		 * @throws Exception if empty cart
 		 */
 		std::vector<Book> GetCartBooks() const;
@@ -164,6 +178,11 @@ class BookstoreService
 		 */
 		void SaveCartToFile(const std::string &fileName) const;
 
+		/**
+		 * Gets all books' titles from the cart
+		 *
+		 * @returns All books' titles from cart
+		 */
 		std::vector<std::string> GetCartTitles() const;
 };
 

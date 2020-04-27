@@ -5,8 +5,6 @@
 #include "./entities.h"
 #include "../infrastructure/repos.h"
 
-class BookstoreService;
-
 /// Base operation object
 class Operation
 {

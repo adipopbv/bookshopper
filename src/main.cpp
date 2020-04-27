@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include "./business/services.h"
@@ -9,9 +10,9 @@
 auto main() -> int
 {
 	// the books repository
-	Repo<Book> booksRepo = Repo<Book>();
+	std::shared_ptr<Repo<Book>> booksRepo = std::make_shared<DictRepo<Book>>();
 	// the shopping cart
-	Repo<Book> cart = Repo<Book>();
+	std::shared_ptr<DictRepo<Book>> cart = std::make_shared<DictRepo<Book>>();
 	// the bookshop service
 	BookstoreService bookstoreService = BookstoreService(booksRepo, cart);
 	// the bookshop client
