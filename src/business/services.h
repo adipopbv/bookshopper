@@ -163,5 +163,7 @@ class BookstoreService
 		 * @throws Exception if repo is empty
 		 */
 		void SaveCartToFile(const std::string &fileName) const;
+
+		std::vector<std::string> GetCartTitles() const;
 };
 

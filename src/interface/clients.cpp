@@ -259,6 +259,19 @@ void BookstoreClient::SaveCartToFile()
 	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
 }
 
+void BookstoreClient::ListAllCartTitles() const
+{
+	std::vector<std::string> booksTitles = this->getBookstoreService().GetCartTitles();
+	std::string rezult;
+	rezult = std::accumulate(booksTitles.begin(), booksTitles.end(), rezult, 
+		[] (std::string str1, std::string str2)
+		{
+			return str1 + "──────────\n" + str2 + "\n";
+		}
+	);
+	this->getIO().PrintString(rezult + "──────────\n\n");
+}
+
 void BookstoreClient::ExitApplication() const
 {
 	this->getIO().PrintString("»Exiting application...\n\n");
@@ -288,7 +301,8 @@ void BookstoreClient::RunApplication()
 				"    ╠═[10]: Empty cart\n" +
 				"    ╠═[11]: Add book to cart\n" +
 				"    ╠═[12]: Add random books to cart\n" +
-				"    ╚═[13]: Save cart to file\n"
+				"    ╠═[13]: Save cart to file\n" +
+				"    ╚═[14]: List all cart titles\n"
 			);
 			this->getIO().PrintString("\n");
 			int command = this->getIO().ReadInt("»Please input a command: ");
@@ -350,6 +364,10 @@ void BookstoreClient::RunApplication()
 
 				case 13:
 					this->SaveCartToFile();
+					break;
+
+				case 14:
+					this->ListAllCartTitles();
 					break;
 	
 				default:

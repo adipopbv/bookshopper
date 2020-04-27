@@ -343,3 +343,17 @@ void BookstoreService::SaveCartToFile(const std::string &fileName) const
 	fout.close();
 }
 
+std::vector<std::string> BookstoreService::GetCartTitles() const
+{
+	// throw exception if empty repo
+	if (this->getCart().Empty())
+	{ throw EmptyRepoError("empty cart\n"); }
+
+	// get books titles
+	std::vector<std::string> rezult;
+	std::vector<Book> cartBooks = this->getCart().toVector();
+	for (Book book : cartBooks)
+		rezult.push_back(book.getTitle());
+	return rezult;
+}
+
