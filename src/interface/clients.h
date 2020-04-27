@@ -68,6 +68,9 @@ class BookstoreClient
 		/// Saves the cart to csv file
 		void SaveCartToFile();
 
+		/// Lists titles from cart
+		void ListAllCartTitles() const;
+
 		/// Exits application
 		void ExitApplication() const;
 
