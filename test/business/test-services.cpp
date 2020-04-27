@@ -256,3 +256,18 @@ TEST(BookstoreService, SaveCartToFile)
 	remove(fileName.c_str());
 }
 
+TEST(BookstoreService, GetCartTitles)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	ASSERT_THROW(service.GetCartTitles(), EmptyRepoError);
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	service.AddToCart("ce");
+	service.AddToCart("vai");
+	ASSERT_TRUE(service.GetCartTitles().size() == 2
+			&& service.GetCartTitles()[0] == "ce"
+			&& service.GetCartTitles()[1] == "vai");
+}
+
