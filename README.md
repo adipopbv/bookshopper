@@ -48,7 +48,7 @@ The app displays a menu after each operation, presenting all posible operations.
 
 To select an operation, type the command number indicating the wanted operation and press <code>Enter</code> or <code>Return</code>.
 
-A book has some fields: _title_, _author_, _genre_, _release year_ and is uniqely identified by _**title**_ and _**author**_. The app should do the following operations:
+A book has some fields: _title_, _author_, _genre_, _release year_ and is uniqely identified by _**title**_ and _**author**_. Within the app you can do the following operations:
 > 1. Display the full list of books
 
 > 2. Basic operations:
@@ -76,5 +76,6 @@ A book has some fields: _title_, _author_, _genre_, _release year_ and is uniqel
 >    * Add book to cart (by title)
 >    * Add random books to cart
 >    * Export cart as CVS
+>    * List titles
 
 A more elaborate manual will be added to the [wiki](https://github.com/adipopbv/bookshopper/wiki) if decided necessary.
