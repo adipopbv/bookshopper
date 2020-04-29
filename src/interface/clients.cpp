@@ -207,7 +207,7 @@ void BookstoreClient::ListAllCartBooks() const
 		this->PrintBook(book);
 	});
 	this->getIO().PrintString("──────────\n");
-	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart()->Size()) + ".\n\n");
 }
 
 void BookstoreClient::EmptyCart()
@@ -216,7 +216,7 @@ void BookstoreClient::EmptyCart()
 	service.EmptyCart();
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
-	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart()->Size()) + ".\n\n");
 }
 
 void BookstoreClient::AddToCart()
@@ -230,7 +230,7 @@ void BookstoreClient::AddToCart()
 	service.AddToCart(title);
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
-	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart()->Size()) + ".\n\n");
 }
 
 void BookstoreClient::AddRandomBooksToCart()
@@ -244,7 +244,7 @@ void BookstoreClient::AddRandomBooksToCart()
 	service.AddRandomBooksToCart(count);
 	this->setBookstoreService(service);
 	this->getIO().PrintString("»Operation succesful!\n");
-	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart()->Size()) + ".\n\n");
 }
 
 void BookstoreClient::SaveCartToFile()
@@ -256,7 +256,7 @@ void BookstoreClient::SaveCartToFile()
 	this->getIO().PrintString("\n");
 	this->getBookstoreService().SaveCartToFile(fileName);
 	this->getIO().PrintString("»Operation succesful!\n");
-	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart().Size()) + ".\n\n");
+	this->getIO().PrintString("»Books in cart: " + std::to_string(this->getBookstoreService().getCart()->Size()) + ".\n\n");
 }
 
 void BookstoreClient::ListAllCartTitles() const
