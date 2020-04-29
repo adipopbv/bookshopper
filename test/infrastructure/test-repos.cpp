@@ -2,9 +2,9 @@
 #include "../../src/infrastructure/repos.h"
 #include "../../src/domain/exceptions.h"
 
-TEST(Repo, OperatorSubscription)
+TEST(DictRepo, OperatorSubscription)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element = 0;
 	ASSERT_THROW(repo[0], EmptyRepoError);
 	repo.Add(element);
@@ -18,9 +18,9 @@ TEST(Repo, OperatorSubscription)
 	ASSERT_TRUE(repo[0] == 1);
 }
 
-TEST(Repo, Size)
+TEST(DictRepo, Size)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2, element3 = 3;
 	ASSERT_TRUE(repo.Size() == 0);
 	repo.Add(element1);
@@ -31,17 +31,17 @@ TEST(Repo, Size)
 	ASSERT_TRUE(repo.Size() == 3);
 }
 
-TEST(Repo, Empty)
+TEST(DictRepo, Empty)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	ASSERT_TRUE(repo.Empty());
 	repo.Add(0);
 	ASSERT_FALSE(repo.Empty());
 }
 
-TEST(Repo, Swap)
+TEST(DictRepo, Swap)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2;
 	repo.Add(element1);
 	repo.Add(element2);
@@ -55,9 +55,9 @@ TEST(Repo, Swap)
 			&& repo[1] == element1);
 }
 
-TEST(Repo, Add)
+TEST(DictRepo, Add)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2, element3 = 3, element4 = 2;
 	repo.Add(element1);
 	ASSERT_TRUE(repo[0] == element1);
@@ -71,9 +71,9 @@ TEST(Repo, Add)
 	ASSERT_THROW(repo.Add(element4), DuplicateError);
 }
 
-TEST(Repo, Insert)
+TEST(DictRepo, Insert)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2, element3 = 3, element4 = 4;
 	ASSERT_THROW(repo.Insert(1, element1), EmptyRepoError);
 	repo.Add(element1);
@@ -94,9 +94,9 @@ TEST(Repo, Insert)
 			&& repo[3] == element1);
 }
 
-TEST(Repo, Erase)
+TEST(DictRepo, Erase)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2, element3 = 3;
 	repo.Add(element1);
 	repo.Add(element2);
@@ -111,9 +111,9 @@ TEST(Repo, Erase)
 	ASSERT_TRUE(repo.Size() == 0);
 }
 
-TEST(Repo, FindIf)
+TEST(DictRepo, FindIf)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 1;
 	ASSERT_THROW(repo.FindIf([](int currentElem){ return true; }), EmptyRepoError);
 	repo.Add(element1);
@@ -122,9 +122,9 @@ TEST(Repo, FindIf)
 	ASSERT_THROW(repo.FindIf([&element2](int currentElem){ return currentElem == element2; }), NotFoundError);
 }
 
-TEST(Repo, Sort)
+TEST(DictRepo, Sort)
 {
-	Repo<int> repo = Repo<int>();
+	DictRepo<int> repo = DictRepo<int>();
 	int element1 = 1, element2 = 2, element3 = 3;
 	ASSERT_THROW(repo.Sort([](int first, int second){ return (first < second); }), EmptyRepoError);
 	repo.Add(element2);

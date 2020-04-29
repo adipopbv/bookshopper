@@ -3,13 +3,13 @@
 
 TEST(BookstoreService, GetBooks)
 {
-	Repo<Book> books = Repo<Book>();
+	std::shared_ptr<Repo<Book>> books = std::make_shared<DictRepo<Book>>();
 	Book book = Book("ceva", "cineva", "careva", 2020);
-	books.Add(book);
+	books->Add(book);
 	BookstoreService service = BookstoreService();
 	ASSERT_THROW(service.GetBooks()[0], EmptyRepoError);
 	service = BookstoreService(books);
-	ASSERT_TRUE(service.GetBooks()[0] == books[0]);
+	ASSERT_TRUE(service.GetBooks()[0] == books->operator[](0));
 }
 
 TEST(BookstoreService, AddBookToRepo)
@@ -174,13 +174,13 @@ TEST(BookstoreService, GetCartBooks)
 	BookstoreService service = BookstoreService();
 	service.AddBookToRepo("ce", "se", "intampla", 301);
 	service.AddBookToRepo("vai", "de", "noi", 2020);
-	Repo<Book> cart = Repo<Book>();
+	std::shared_ptr<Repo<Book>> cart = std::make_shared<DictRepo<Book>>();
 	ASSERT_THROW(service.GetCartBooks(), EmptyRepoError);
-	cart.Add(service.getBooksRepo()[0]);
+	cart->Add(service.getBooksRepo()->operator[](0));
 	service.setCart(cart);
 	ASSERT_TRUE(service.GetCartBooks().size() == 1
 			&& service.GetCartBooks()[0] == book1);
-	cart.Add(service.getBooksRepo()[1]);
+	cart->Add(service.getBooksRepo()->operator[](1));
 	service.setCart(cart);
 	ASSERT_TRUE(service.GetCartBooks().size() == 2
 			&& service.GetCartBooks()[0] == book1
@@ -254,5 +254,20 @@ TEST(BookstoreService, SaveCartToFile)
 	ASSERT_TRUE(fileString == "vai,de,noi,2020");
 	fin.close();
 	remove(fileName.c_str());
+}
+
+TEST(BookstoreService, GetCartTitles)
+{
+	Book book1 = Book("ce", "se", "intampla", 301);
+	Book book2 = Book("vai", "de", "noi", 2020);
+	BookstoreService service = BookstoreService();
+	ASSERT_THROW(service.GetCartTitles(), EmptyRepoError);
+	service.AddBookToRepo("ce", "se", "intampla", 301);
+	service.AddBookToRepo("vai", "de", "noi", 2020);
+	service.AddToCart("ce");
+	service.AddToCart("vai");
+	ASSERT_TRUE(service.GetCartTitles().size() == 2
+			&& service.GetCartTitles()[0] == "ce"
+			&& service.GetCartTitles()[1] == "vai");
 }
 
