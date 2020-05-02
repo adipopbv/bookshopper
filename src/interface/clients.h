@@ -1,87 +1,67 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <algorithm>
-
 #include "../business/services.h"
 #include "../infrastructure/repos.h"
-#include "./graphical-interface/terminal-io.h"
 #include "../domain/entities.h"
 
 class BookstoreClient
 {
-	private:
+	protected:
 		/// Book service
-		BookstoreService bookstoreService = BookstoreService();
-
-		/// Terminal input and output operations handler
-		const TerminalIO io;
+		std::shared_ptr<BookstoreService> bookstoreService = std::make_shared<BookstoreService>();
 
 		/// Library service getter
-		BookstoreService getBookstoreService() const { return this->bookstoreService; }
+		std::shared_ptr<BookstoreService> getBookstoreService() const { return this->bookstoreService; }
 		/// Library service setter
-		void setBookstoreService(BookstoreService const value) { this->bookstoreService = value; }
-
-		/// Io getter
-		TerminalIO getIO() const { return this->io; }
-
-		/// Prints a book's data
-		void PrintBook(Book const book) const;
-
-		/// Lists all books
-		void ListAllBooks() const;
+		void setBookstoreService(std::shared_ptr<BookstoreService> const value) { this->bookstoreService = value; }
 
 		/// Adds book to the repository
-		void AddBook();
+		virtual void AddBook() = 0;
 
 		/// Modifies a book from the repository
-		void ModifyBook();
+		virtual void ModifyBook() = 0;
 
 		/// Deletes a book from the repository
-		void DeleteBook();
+		virtual void DeleteBook() = 0;
 
 		/// Searches a book in the repository
-		void SearchBook();
+		virtual void SearchBook() = 0;
 
 		/// Filters books by title and/or release year
-		void FilterBooks();
+		virtual void FilterBooks() = 0;
 
 		/// Sorts books by title, author or release year and genre
-		void SortBooks();
+		virtual void SortBooks() = 0;
 
 		/// Undoes the last basic operation
-		void UndoOperation();
-
-		/// Lists all books in the cart
-		void ListAllCartBooks() const;
+		virtual void UndoOperation() = 0;
 
 		/// Empties the cart
-		void EmptyCart();
+		virtual void EmptyCart() = 0;
 
 		/// Adds book by title to the cart
-		void AddToCart();
+		virtual void AddToCart() = 0;
 
 		/// Adds random books to the cart
-		void AddRandomBooksToCart();
+		virtual void AddRandomBooksToCart() = 0;
 
 		/// Saves the cart to csv file
-		void SaveCartToFile();
+		virtual void SaveCartToFile() = 0;
 
 		/// Lists titles from cart
-		void ListAllCartTitles() const;
+		virtual void ListAllCartTitles() const = 0;
 
 		/// Exits application
-		void ExitApplication() const;
+		virtual void ExitApplication() const = 0;
 
 	public:
 		/// Library client constructor
-		BookstoreClient(const BookstoreService &bookstoreService);
+		BookstoreClient() = default;
 
 		/// Library client destructor
-		~BookstoreClient();
+		~BookstoreClient() = default;
 
 		/// Main application loop holder
-		void RunApplication();
+		virtual int RunApplication() = 0;
 };
 
