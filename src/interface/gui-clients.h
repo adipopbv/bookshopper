@@ -2,8 +2,12 @@
 
 #include <QApplication>
 #include <QGroupBox>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -15,11 +19,24 @@ using std::make_shared;
 class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 {
 	protected:
+		// main menu
 		shared_ptr<QWidget> mainMenu;
 		shared_ptr<QVBoxLayout> mainMenuLayout;
-
+		// library side and cart side
 		shared_ptr<QGroupBox> librarySide, cartSide;
-		shared_ptr<QHBoxLayout> sidesLayout;
+		shared_ptr<QHBoxLayout> librarySideLayout, cartSideLayout;
+		// library books list and cart books list
+		shared_ptr<QListWidget> libraryBooksList, cartBooksList;
+		// library actions and cart actions
+		shared_ptr<QWidget> libraryActions, cartActions;
+		shared_ptr<QGridLayout> libraryActionsLayout, cartActionsLayout;
+		// library actions label and cart actions label
+		shared_ptr<QLabel> libraryActionsLabel, cartActionsLabel;
+		// library actions buttons and cart actions buttons
+		shared_ptr<QPushButton> libraryActionsAddButton, libraryActionsModifyButton, libraryActionsDeleteButton, libraryActionsSearchButton, libraryActionsFilterButton, libraryActionsSortButton, libraryActionsUndoButton, cartActionsEmptyButton, cartActionsAddButton, cartActionsAddRandomButton, cartActionsExportButton, cartActionsTitlesButton;
+
+		void InitLibraryBooksList();
+		void InitCartBooksList();
 
 		/// Adds book to the repository
 		void AddBook() override;
