@@ -5,8 +5,11 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QMessageBox>
+#include <QObject>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -19,24 +22,71 @@ using std::make_shared;
 class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 {
 	protected:
-		// main menu
+		/// Main menu
 		shared_ptr<QWidget> mainMenu;
 		shared_ptr<QVBoxLayout> mainMenuLayout;
-		// library side and cart side
+		/// Library side and cart side
 		shared_ptr<QGroupBox> librarySide, cartSide;
 		shared_ptr<QHBoxLayout> librarySideLayout, cartSideLayout;
-		// library books list and cart books list
+		/// Library books list and cart books list
 		shared_ptr<QListWidget> libraryBooksList, cartBooksList;
-		// library actions and cart actions
+		/// Library actions and cart actions
 		shared_ptr<QWidget> libraryActions, cartActions;
 		shared_ptr<QGridLayout> libraryActionsLayout, cartActionsLayout;
-		// library actions label and cart actions label
+		/// Library actions label and cart actions label
 		shared_ptr<QLabel> libraryActionsLabel, cartActionsLabel;
-		// library actions buttons and cart actions buttons
+		/// Library actions buttons and cart actions buttons
 		shared_ptr<QPushButton> libraryActionsAddButton, libraryActionsModifyButton, libraryActionsDeleteButton, libraryActionsSearchButton, libraryActionsFilterButton, libraryActionsSortButton, libraryActionsUndoButton, cartActionsEmptyButton, cartActionsAddButton, cartActionsAddRandomButton, cartActionsExportButton, cartActionsTitlesButton;
 
-		void InitLibraryBooksList();
-		void InitCartBooksList();
+		/// Add menu
+		shared_ptr<QGroupBox> addMenu;
+		shared_ptr<QGridLayout> addMenuLayout;
+		/// Book fields
+		shared_ptr<QLabel> addTitleLabel, addAuthorLabel, addGenreLabel, addReleaseYearLabel;
+		shared_ptr<QLineEdit> addTitle, addAuthor, addGenre, addReleaseYear;
+		/// Accept and cancel buttons
+		shared_ptr<QPushButton> addAccept, addCancel;
+
+		/// Modify menu
+		shared_ptr<QGroupBox> modifyMenu;
+		shared_ptr<QHBoxLayout> modifyMenuLayout;
+		/// Books list
+		shared_ptr<QListWidget> modifyBooksList;
+		/// Actions
+		shared_ptr<QWidget> modifyActions;
+		shared_ptr<QGridLayout> modifyActionsLayout;
+		/// Book fields
+		shared_ptr<QLabel> modifyTitleLabel, modifyAuthorLabel, modifyGenreLabel, modifyReleaseYearLabel;
+		shared_ptr<QLineEdit> modifyTitle, modifyAuthor, modifyGenre, modifyReleaseYear;
+		/// Accept and cancel buttons
+		shared_ptr<QPushButton> modifyAccept, modifyCancel;
+
+		/// Delete menu
+		shared_ptr<QGroupBox> deleteMenu;
+		shared_ptr<QVBoxLayout> deleteMenuLayout;
+		/// Books list
+		shared_ptr<QListWidget> deleteBooksList;
+		/// Actions
+		shared_ptr<QWidget> deleteActions;
+		shared_ptr<QHBoxLayout> deleteActionsLayout;
+		/// Accept and cancel buttons
+		shared_ptr<QPushButton> deleteAccept, deleteCancel;
+
+		/// Menus inits
+		void InitMainMenu();
+		void InitAddMenu();
+		void InitModifyMenu();
+		void InitDeleteMenu();
+
+		/// Show menus
+		void ShowMainMenu();
+		void ShowAddMenu();
+		void ShowModifyMenu();
+		void ShowDeleteMenu();
+
+		/// Repos updates
+		void UpdateLibraryBooksList();
+		void UpdateCartBooksList();
 
 		/// Adds book to the repository
 		void AddBook() override;
