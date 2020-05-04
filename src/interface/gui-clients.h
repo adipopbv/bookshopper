@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -43,7 +44,8 @@ class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 		shared_ptr<QGridLayout> addMenuLayout;
 		/// Book fields
 		shared_ptr<QLabel> addTitleLabel, addAuthorLabel, addGenreLabel, addReleaseYearLabel;
-		shared_ptr<QLineEdit> addTitle, addAuthor, addGenre, addReleaseYear;
+		shared_ptr<QLineEdit> addTitle, addAuthor, addGenre;
+		shared_ptr<QSpinBox> addReleaseYear;
 		/// Accept and cancel buttons
 		shared_ptr<QPushButton> addAccept, addCancel;
 

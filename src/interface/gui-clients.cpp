@@ -133,7 +133,8 @@ void GraphicalBookstoreClient::InitAddMenu()
 	this->addTitle = make_shared<QLineEdit>();
 	this->addAuthor = make_shared<QLineEdit>();
 	this->addGenre = make_shared<QLineEdit>();
-	this->addReleaseYear = make_shared<QLineEdit>();
+	this->addReleaseYear = make_shared<QSpinBox>();
+	this->addReleaseYear->setMaximum(2020);
 
 	// accept and cancel buttons
 	this->addAccept = make_shared<QPushButton>(tr("Accept"));
