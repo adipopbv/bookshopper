@@ -56,3 +56,4 @@ void SearchMenu::Hide()
 	this->genreField->clear();
 	this->releaseYearField->clear();
 }
+

@@ -11,6 +11,9 @@ GraphicalBookstoreClient::GraphicalBookstoreClient(std::shared_ptr<BookstoreServ
 	this->searchMenu = make_shared<SearchMenu>();
 	this->filterMenu = make_shared<FilterMenu>();
 	this->sortMenu = make_shared<SortMenu>();
+	this->addToCartMenu = make_shared<AddToCartMenu>(bookstoreService);
+	this->addRandomToCartMenu = make_shared<AddRandomToCartMenu>();
+	this->listCartTitlesMenu = make_shared<ListCartTitlesMenu>(bookstoreService);
 
 	this->InitButtons();
 
@@ -22,12 +25,22 @@ GraphicalBookstoreClient::~GraphicalBookstoreClient() { }
 void GraphicalBookstoreClient::InitButtons()
 {
 	// main menu buttons
+	// library side
 	QObject::connect(this->mainMenu->libraryAddButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->addMenu->Show(); });
 	QObject::connect(this->mainMenu->libraryModifyButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->modifyMenu->Show(); });
 	QObject::connect(this->mainMenu->libraryDeleteButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->deleteMenu->Show(); });
 	QObject::connect(this->mainMenu->librarySearchButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->searchMenu->Show(); });
 	QObject::connect(this->mainMenu->libraryFilterButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->filterMenu->Show(); });
 	QObject::connect(this->mainMenu->librarySortButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->sortMenu->Show(); });
+	QObject::connect(this->mainMenu->libraryUndoButton.get(), &QPushButton::clicked, [this] () { this->UndoOperation(); });
+	// cart side
+	QObject::connect(this->mainMenu->cartEmptyButton.get(), &QPushButton::clicked, [this] () { this->EmptyCart(); });
+	QObject::connect(this->mainMenu->cartAddButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->addToCartMenu->Show(); });
+	QObject::connect(this->mainMenu->cartAddRandomButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->addRandomToCartMenu->Show(); });
+	QObject::connect(this->mainMenu->cartExportButton.get(), &QPushButton::clicked, [this] () { this->SaveCartToFile(); });
+	QObject::connect(this->mainMenu->cartTitlesButton.get(), &QPushButton::clicked, [this] () { this->ListAllCartTitles(); });
+	// exit button
+	QObject::connect(this->mainMenu->exitAppButton.get(), &QPushButton::clicked, [this] () { this->ExitApplication(); });
 
 	// add menu buttons
 	QObject::connect(this->addMenu->acceptButton.get(), &QPushButton::clicked, [this] () { this->AddBook(); this->addMenu->Hide(); this->mainMenu->Show(); });
@@ -53,6 +66,17 @@ void GraphicalBookstoreClient::InitButtons()
 	// sort menu buttons
 	QObject::connect(this->sortMenu->acceptButton.get(), &QPushButton::clicked, [this] () { this->SortBooks(); this->sortMenu->Hide(); this->mainMenu->Show(); });
 	QObject::connect(this->sortMenu->cancelButton.get(), &QPushButton::clicked, [this] () { this->sortMenu->Hide(); this->mainMenu->Show(); });
+
+	// add to cart menu buttons
+	QObject::connect(this->addToCartMenu->acceptButton.get(), &QPushButton::clicked, [this] () { this->AddToCart(); this->addToCartMenu->Hide(); this->mainMenu->Show(); });
+	QObject::connect(this->addToCartMenu->cancelButton.get(), &QPushButton::clicked, [this] () { this->addToCartMenu->Hide(); this->mainMenu->Show(); });
+
+	// add random to cart menu buttons
+	QObject::connect(this->addRandomToCartMenu->acceptButton.get(), &QPushButton::clicked, [this] () { this->AddRandomBooksToCart(); this->addRandomToCartMenu->Hide(); this->mainMenu->Show(); });
+	QObject::connect(this->addRandomToCartMenu->cancelButton.get(), &QPushButton::clicked, [this] () { this->addRandomToCartMenu->Hide(); this->mainMenu->Show(); });
+
+	// list cart titles menu buttons
+	QObject::connect(this->listCartTitlesMenu->okButton.get(), &QPushButton::clicked, [this] () { this->listCartTitlesMenu->Hide(); this->mainMenu->Show(); });
 }
 
 void GraphicalBookstoreClient::AddBook()
@@ -213,37 +237,126 @@ void GraphicalBookstoreClient::SortBooks()
 
 void GraphicalBookstoreClient::UndoOperation()
 {
+	QMessageBox confirmationMessage, succesMessage;
+	confirmationMessage.setText("Are you sure you want to undo?");
+	confirmationMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	confirmationMessage.setDefaultButton(QMessageBox::Yes);
+	int rezult = confirmationMessage.exec();
 
+	succesMessage.setText("Operation succesful!");
+	try
+	{
+		switch (rezult)
+		{
+			case QMessageBox::Yes:
+				this->bookstoreService->UndoOperation();
+				break;
+    
+			case QMessageBox::No:
+				return;
+    
+			default:
+				break;
+		}
+	}
+	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
+
+	succesMessage.exec();
+	this->mainMenu->Hide();
+	this->mainMenu->Show();
 }
 
 void GraphicalBookstoreClient::EmptyCart()
 {
+	QMessageBox confirmationMessage, succesMessage;
+	confirmationMessage.setText("Are you sure you want to empty the cart?");
+	confirmationMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	confirmationMessage.setDefaultButton(QMessageBox::Yes);
+	int rezult = confirmationMessage.exec();
+
+	succesMessage.setText("Operation succesful!");
+	try
+	{
+		switch (rezult)
+		{
+			case QMessageBox::Yes:
+				this->bookstoreService->EmptyCart();
+				break;
+    
+			case QMessageBox::No:
+				return;
+    
+			default:
+				break;
+		}
+	}
+	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
+
+	succesMessage.exec();
+	this->mainMenu->Hide();
+	this->mainMenu->Show();
 
 }
 
 void GraphicalBookstoreClient::AddToCart()
 {
+	QMessageBox succesMessage;
 
+	if (this->addToCartMenu->booksList->count() == 0)
+	{
+		succesMessage.setText(tr("Error:\nempty repo"));
+		succesMessage.exec();
+		return;
+	}
+
+	if (this->addToCartMenu->booksList->currentItem() == NULL)
+	{
+		succesMessage.setText(tr("Error:\nnothing selected"));
+		succesMessage.exec();
+		return;
+	}
+
+	QVariant bookDataVar = this->addToCartMenu->booksList->currentItem()->data(Qt::UserRole);
+	QList<QVariant> bookData = bookDataVar.toList();
+	std::string titleSearch = bookData[0].toString().toStdString();
+	
+	succesMessage.setText(tr("Operation succesful!"));
+	try { this->bookstoreService->AddToCart(titleSearch); }
+	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
+	succesMessage.exec();
 }
 
 void GraphicalBookstoreClient::AddRandomBooksToCart()
 {
-
+	QMessageBox succesMessage;
+	succesMessage.setText(tr("Operation succesful!"));
+	try { this->bookstoreService->AddRandomBooksToCart(this->addRandomToCartMenu->countField->text().toInt()); }
+	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
+	succesMessage.exec();
 }
 
 void GraphicalBookstoreClient::SaveCartToFile()
 {
-
+	QString qFileName = QFileDialog::getSaveFileName(this->mainMenu.get(), tr("Select file for export"), ".", tr("(*.csv *.txt)"));
+	std::string fileName = qFileName.toStdString();
+	try { this->getBookstoreService()->SaveCartToFile(fileName); }
+	catch (AppException &e) { remove(fileName.c_str()); }
 }
 
 void GraphicalBookstoreClient::ListAllCartTitles() const
 {
-
+	this->mainMenu->Hide();
+	this->listCartTitlesMenu->Show();
 }
 
 void GraphicalBookstoreClient::ExitApplication() const
 {
-
+	QMessageBox confirmationMessage;
+	confirmationMessage.setText(tr("Are you sure you want to quit?"));
+	confirmationMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	confirmationMessage.setDefaultButton(QMessageBox::Yes);
+	if (confirmationMessage.exec() == QMessageBox::Yes)
+		this->quit();
 }
 
 int GraphicalBookstoreClient::RunApplication()

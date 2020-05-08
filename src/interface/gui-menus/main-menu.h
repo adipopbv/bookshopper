@@ -19,7 +19,7 @@ using std::make_shared;
 class MainMenu: public QGroupBox
 {
 	protected:
-		/// Serveice reference
+		/// Service reference
 		shared_ptr<BookstoreService> service;
 
 		/// Menu layout
@@ -47,6 +47,9 @@ class MainMenu: public QGroupBox
 		void InitCartSide();
 
 	public:
+		/// Quit button
+		shared_ptr<QPushButton> exitAppButton;
+
 		/// Library buttons and cart buttons
 		shared_ptr<QPushButton> libraryAddButton, libraryModifyButton, libraryDeleteButton, librarySearchButton, libraryFilterButton, librarySortButton, libraryUndoButton, cartEmptyButton, cartAddButton, cartAddRandomButton, cartExportButton, cartTitlesButton;
 

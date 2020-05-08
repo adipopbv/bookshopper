@@ -16,6 +16,8 @@ MainMenu::MainMenu(shared_ptr<BookstoreService> const &service)
 
 	// initializing library side
 	this->InitLibrarySide();
+	// exit button
+	this->exitAppButton = make_shared<QPushButton>(tr("Exit application"));
 	// initializing cart side
 	this->InitCartSide();
 
@@ -25,6 +27,8 @@ MainMenu::MainMenu(shared_ptr<BookstoreService> const &service)
 	this->menuLayout->addWidget(this->librarySide.get());
 	// adding cart side
 	this->menuLayout->addWidget(this->cartSide.get());
+	// adding exit button
+	this->menuLayout->addWidget(this->exitAppButton.get(), Qt::AlignCenter);
 }
 
 void MainMenu::InitLibrarySide()
@@ -117,10 +121,6 @@ void MainMenu::InitCartSide()
 
 void MainMenu::Show()
 {
-	// disable lists
-	this->libraryBooksList->setDisabled(true);
-	this->cartBooksList->setDisabled(true);
-
 	// update library books list view
 	std::vector<Book> libraryBooks;
 	try { libraryBooks = this->service->GetBooks(); }
@@ -154,6 +154,9 @@ void MainMenu::Hide()
 	this->hide();
 
 	this->libraryBooksList->clear();
+	this->libraryBooksList->clearSelection();
+
 	this->cartBooksList->clear();
+	this->cartBooksList->clearSelection();
 }
 

@@ -8,7 +8,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "../../domain/entities.h"
 #include "../../business/services.h"
 
 using std::shared_ptr;
@@ -17,7 +16,7 @@ using std::make_shared;
 class DeleteMenu: public QGroupBox
 {
 	protected:
-		/// Serveice reference
+		/// Service reference
 		shared_ptr<BookstoreService> service;
 
 		/// Menu layout

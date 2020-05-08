@@ -1,12 +1,12 @@
-#include "./delete-menu.h"
+#include "./add-to-cart-menu.h"
 
-DeleteMenu::DeleteMenu(shared_ptr<BookstoreService> const &service)
+AddToCartMenu::AddToCartMenu(shared_ptr<BookstoreService> const &service)
 {
 	// service reference
 	this->service = service;
 
 	// menu title
-	this->setTitle(tr("delete menu"));
+	this->setTitle(tr("add to cart menu"));
 	// menu layout
 	this->menuLayout = make_shared<QVBoxLayout>();
 	this->setLayout(this->menuLayout.get());
@@ -37,7 +37,7 @@ DeleteMenu::DeleteMenu(shared_ptr<BookstoreService> const &service)
 	this->menuLayout->addWidget(this->actions.get());
 }
 
-void DeleteMenu::Show()
+void AddToCartMenu::Show()
 {
 	try
 	{
@@ -69,11 +69,10 @@ void DeleteMenu::Show()
 	this->show();
 }
 
-void DeleteMenu::Hide()
+void AddToCartMenu::Hide()
 {
 	this->hide();
 
 	this->booksList->clearSelection();
 	this->booksList->clear();
 }
-

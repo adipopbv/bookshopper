@@ -335,7 +335,7 @@ void BookstoreService::SaveCartToFile(const std::string &fileName) const
 {
 	std::ofstream fout(fileName); 
 
-	for (Book const &book : this->GetBooks())
+	for (Book const &book : this->GetCartBooks())
 	{ fout << book.getTitle() << "," << book.getAuthor() << "," << book.getGenre() << "," << std::to_string(book.getReleaseYear()) << "\n"; }
 
 	fout.close();

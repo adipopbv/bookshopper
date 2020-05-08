@@ -1,13 +1,17 @@
 #pragma once
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QObject>
 
 #include "./clients.h"
 #include "./gui-menus/add-menu.h"
+#include "./gui-menus/add-to-cart-menu.h"
+#include "./gui-menus/add-random-to-cart-menu.h"
 #include "./gui-menus/delete-menu.h"
 #include "./gui-menus/filter-menu.h"
+#include "./gui-menus/list-cart-titles-menu.h"
 #include "./gui-menus/main-menu.h"
 #include "./gui-menus/modify-menu.h"
 #include "./gui-menus/search-menu.h"
@@ -33,6 +37,12 @@ class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 		shared_ptr<FilterMenu> filterMenu;
 		/// Sort menu
 		shared_ptr<SortMenu> sortMenu;
+		/// Add to cart menu
+		shared_ptr<AddToCartMenu> addToCartMenu;
+		/// Add random to cart menu
+		shared_ptr<AddRandomToCartMenu> addRandomToCartMenu;
+		/// List cart titles menu
+		shared_ptr<ListCartTitlesMenu> listCartTitlesMenu;
 
 		/// Buttons init
 		void InitButtons();
