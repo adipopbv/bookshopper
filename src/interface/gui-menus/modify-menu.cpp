@@ -100,6 +100,8 @@ void ModifyMenu::Show()
 
 void ModifyMenu::Hide()
 {
+	this->hide();
+
 	this->booksList->clearSelection();
 	this->booksList->clear();
 
@@ -107,7 +109,5 @@ void ModifyMenu::Hide()
 	this->authorField->clear();
 	this->genreField->clear();
 	this->releaseYearField->clear();
-
-	this->hide();
 }
 

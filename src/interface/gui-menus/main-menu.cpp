@@ -39,7 +39,6 @@ void MainMenu::InitLibrarySide()
 
 	// library books list
 	this->libraryBooksList = make_shared<QListWidget>(this->librarySide.get());
-	this->libraryBooksList->setDisabled(true);
 
 	// library actions
 	this->libraryActions = make_shared<QGroupBox>(tr("library actions:"));
@@ -86,7 +85,6 @@ void MainMenu::InitCartSide()
 
 	// cart books list
 	this->cartBooksList = make_shared<QListWidget>(this->cartSide.get());
-	this->cartBooksList->setDisabled(true);
 
 	// cart actions
 	this->cartActions = make_shared<QGroupBox>(tr("cart actions:"));
@@ -119,19 +117,33 @@ void MainMenu::InitCartSide()
 
 void MainMenu::Show()
 {
+	// disable lists
+	this->libraryBooksList->setDisabled(true);
+	this->cartBooksList->setDisabled(true);
+
 	// update library books list view
 	std::vector<Book> libraryBooks;
 	try { libraryBooks = this->service->GetBooks(); }
 	catch (EmptyRepoError) { }
 	for (Book const &book: libraryBooks)
-	{ this->libraryBooksList->addItem(tr(("Title: " + book.getTitle() + " | Author: " + book.getAuthor()).c_str())); }
+	{ 
+		this->libraryBooksList->addItem(tr(("Title: " + book.getTitle() + 
+					"\n  Author: " + book.getAuthor() +
+					"\n  Genre: " + book.getGenre() +
+					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
+	}
 
 	// update cart books list view
 	std::vector<Book> cartBooks;
 	try { cartBooks = this->service->GetCartBooks(); }
 	catch (EmptyRepoError) { }
 	for (Book const &book: cartBooks)
-	{ this->cartBooksList->addItem(tr(("Title: " + book.getTitle() + " | Author: " + book.getAuthor()).c_str())); }
+	{
+		this->cartBooksList->addItem(tr(("Title: " + book.getTitle() + 
+					"\n  Author: " + book.getAuthor() +
+					"\n  Genre: " + book.getGenre() +
+					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
+	}
 
 	// show main menu
 	this->show();
@@ -139,9 +151,9 @@ void MainMenu::Show()
 
 void MainMenu::Hide()
 {
+	this->hide();
+
 	this->libraryBooksList->clear();
 	this->cartBooksList->clear();
-
-	this->hide();
 }
 

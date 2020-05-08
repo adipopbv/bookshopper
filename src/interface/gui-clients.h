@@ -5,10 +5,13 @@
 #include <QObject>
 
 #include "./clients.h"
-#include "./gui-menus/main-menu.h"
 #include "./gui-menus/add-menu.h"
-#include "./gui-menus/modify-menu.h"
 #include "./gui-menus/delete-menu.h"
+#include "./gui-menus/filter-menu.h"
+#include "./gui-menus/main-menu.h"
+#include "./gui-menus/modify-menu.h"
+#include "./gui-menus/search-menu.h"
+#include "./gui-menus/sort-menu.h"
 
 using std::shared_ptr;
 using std::make_shared;
@@ -24,6 +27,12 @@ class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 		shared_ptr<ModifyMenu> modifyMenu;
 		/// Delete menu
 		shared_ptr<DeleteMenu> deleteMenu;
+		/// Search menu
+		shared_ptr<SearchMenu> searchMenu;
+		/// Filter menu
+		shared_ptr<FilterMenu> filterMenu;
+		/// Sort menu
+		shared_ptr<SortMenu> sortMenu;
 
 		/// Buttons init
 		void InitButtons();

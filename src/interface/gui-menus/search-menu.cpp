@@ -1,9 +1,9 @@
-#include "./add-menu.h"
+#include "./search-menu.h"
 
-AddMenu::AddMenu()
+SearchMenu::SearchMenu()
 {
 	// menu title
-	this->setTitle(tr("add menu"));
+	this->setTitle(tr("search menu"));
 	// menu layout
 	this->menuLayout = make_shared<QGridLayout>();
 	this->setLayout(this->menuLayout.get());
@@ -42,12 +42,12 @@ AddMenu::AddMenu()
 	this->menuLayout->addWidget(this->releaseYearField.get(), 6, 2, Qt::AlignCenter);
 }
 
-void AddMenu::Show()
+void SearchMenu::Show()
 {
 	this->show();
 }
 
-void AddMenu::Hide()
+void SearchMenu::Hide()
 {
 	this->hide();
 
@@ -56,4 +56,3 @@ void AddMenu::Hide()
 	this->genreField->clear();
 	this->releaseYearField->clear();
 }
-

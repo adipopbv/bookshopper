@@ -68,9 +68,9 @@ void DeleteMenu::Show()
 
 void DeleteMenu::Hide()
 {
+	this->hide();
+
 	this->booksList->clearSelection();
 	this->booksList->clear();
-
-	this->hide();
 }
 
