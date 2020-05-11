@@ -36,3 +36,7 @@
 /CMakeModules
 /lib
 CMakeLists.txt
+
+# Cpp language server files
+compile_commands.json
+/.clangd

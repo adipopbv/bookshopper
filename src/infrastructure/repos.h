@@ -114,7 +114,6 @@ class Repo
 		 * @throws Exception if repo is empty or element is not found
 		 */
 		virtual int FindIf(std::function<bool (ElementType)> const &isMatching) = 0;
-		//DictRepo<ElementType>::Iterator FindIf(std::function<bool (ElementType)> const &isMatching);
 
 		/**
 		 * Sorts the repo
@@ -240,7 +239,6 @@ class DictRepo: public Repo<ElementType>
 		 * @throws Exception if repo is empty or element is not found
 		 */
 		int FindIf(std::function<bool (ElementType)> const &isMatching);
-		//DictRepo<ElementType>::Iterator FindIf(std::function<bool (ElementType)> const &isMatching);
 
 		/**
 		 * Sorts the repo
