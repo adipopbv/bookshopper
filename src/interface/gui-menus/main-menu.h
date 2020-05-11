@@ -36,6 +36,11 @@ class MainMenu: public QGroupBox
 		shared_ptr<QGroupBox> libraryActions, cartActions;
 		shared_ptr<QGridLayout> libraryActionsLayout, cartActionsLayout;
 
+		/// Library books as buttons list
+		shared_ptr<QGroupBox> booksAsButtons;
+		shared_ptr<QVBoxLayout> booksAsButtonsLayout;
+		std::vector<shared_ptr<QPushButton>> booksAsButtonsList;
+
 		/**
 		 * @brief Initializes the library side of the main menu
 		 */
@@ -55,6 +60,16 @@ class MainMenu: public QGroupBox
 
 		/// Constructor
 		MainMenu(shared_ptr<BookstoreService> const &service);
+
+		/**
+		 * @brief Updates the libray side book list
+		 */
+		void UpdateLibraryList();
+
+		/**
+		 * @brief Updates the cart side book list
+		 */
+		void UpdateCartList();
 
 		/**
 		 * @brief Shows the main menu window
