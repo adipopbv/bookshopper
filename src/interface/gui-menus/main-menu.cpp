@@ -59,6 +59,11 @@ void MainMenu::InitLibrarySide()
 	this->librarySortButton = make_shared<QPushButton>(tr("Sort"));
 	this->libraryUndoButton = make_shared<QPushButton>(tr("Undo"));
 
+	// library books as buttons list
+	this->booksAsButtons = make_shared<QGroupBox>(tr("books as buttons"));
+	this->booksAsButtonsLayout = make_shared<QVBoxLayout>();
+	this->booksAsButtons->setLayout(this->booksAsButtonsLayout.get());
+
 	// adding widgets to layouts
 
 	// adding library buttons
@@ -75,6 +80,9 @@ void MainMenu::InitLibrarySide()
 
 	// adding library actions
 	this->librarySideLayout->addWidget(this->libraryActions.get());
+
+	// adding books as button list
+	this->librarySideLayout->addWidget(this->booksAsButtons.get());
 }
 
 void MainMenu::InitCartSide()
@@ -119,21 +127,52 @@ void MainMenu::InitCartSide()
 	this->cartSideLayout->addWidget(this->cartActions.get());
 }
 
-void MainMenu::Show()
+void MainMenu::UpdateLibraryList()
 {
-	// update library books list view
+	this->libraryBooksList->clear();
+	this->libraryBooksList->clearSelection();
+	for (shared_ptr<QPushButton> button: this->booksAsButtonsList)
+	{
+		this->booksAsButtonsLayout->removeWidget(button.get());
+	}
+	this->booksAsButtonsList.clear();
+
 	std::vector<Book> libraryBooks;
 	try { libraryBooks = this->service->GetBooks(); }
 	catch (EmptyRepoError) { }
-	for (Book const &book: libraryBooks)
+	for (int i = 0; i < (int)libraryBooks.size(); i++)
 	{ 
+		Book book = libraryBooks[i];
 		this->libraryBooksList->addItem(tr(("Title: " + book.getTitle() + 
 					"\n  Author: " + book.getAuthor() +
 					"\n  Genre: " + book.getGenre() +
-					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
-	}
+					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str()));    
 
-	// update cart books list view
+		shared_ptr<QPushButton> button = make_shared<QPushButton>(tr((book.getTitle() + " | " + book.getAuthor()).c_str()));
+		this->booksAsButtonsList.push_back(button);
+		QObject::connect(button.get(), &QPushButton::clicked, [i, this] ()
+				{
+					std::string text = this->booksAsButtonsList[i]->text().toStdString();
+
+					size_t pos = text.find(" | ");
+					std::string title = text.substr(0, pos);
+					text.erase(0, pos + std::string(" | ").length());
+					std::string author = text;
+
+					this->service->DeleteBookFromRepo(title, author);
+					this->booksAsButtonsLayout->removeWidget(this->booksAsButtonsList[i].get());
+					this->booksAsButtonsList.erase(this->booksAsButtonsList.begin() + i);
+					this->UpdateLibraryList();
+				});
+		this->booksAsButtonsLayout->addWidget(button.get());
+	}
+}
+
+void MainMenu::UpdateCartList()
+{
+	this->cartBooksList->clear();
+	this->cartBooksList->clearSelection();
+
 	std::vector<Book> cartBooks;
 	try { cartBooks = this->service->GetCartBooks(); }
 	catch (EmptyRepoError) { }
@@ -144,6 +183,15 @@ void MainMenu::Show()
 					"\n  Genre: " + book.getGenre() +
 					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
 	}
+}
+
+void MainMenu::Show()
+{
+	// update library books list view
+	this->UpdateLibraryList();
+
+	// update cart books list view
+	this->UpdateCartList();
 
 	// show main menu
 	this->show();
@@ -152,11 +200,5 @@ void MainMenu::Show()
 void MainMenu::Hide()
 {
 	this->hide();
-
-	this->libraryBooksList->clear();
-	this->libraryBooksList->clearSelection();
-
-	this->cartBooksList->clear();
-	this->cartBooksList->clearSelection();
 }
 
