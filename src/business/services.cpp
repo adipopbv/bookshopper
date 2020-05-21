@@ -14,6 +14,12 @@ BookstoreService::~BookstoreService()
 	this->setCart(std::make_shared<DictRepo<Book>>());
 }
 
+void BookstoreService::Notify()
+{
+	for (Observer* const &observer: observers)
+		observer->Update();
+}
+
 std::vector<Book> BookstoreService::GetBooks() const 
 {
 	// throw exception if empty repo
@@ -275,6 +281,8 @@ void BookstoreService::EmptyCart()
 {
 	// set cart to empty repo
 	this->setCart(std::make_shared<DictRepo<Book>>());
+
+	Notify();
 }
 
 void BookstoreService::AddToCart(const std::string &title)
@@ -302,6 +310,8 @@ void BookstoreService::AddToCart(const std::string &title)
 
 	// update original cart
 	this->setCart(cart);
+
+	Notify();
 }
 
 void BookstoreService::AddRandomBooksToCart(int const &count)
@@ -329,6 +339,8 @@ void BookstoreService::AddRandomBooksToCart(int const &count)
 	}
 	// update original repo
 	this->setCart(cart);
+
+	Notify();
 }
 
 void BookstoreService::SaveCartToFile(const std::string &fileName) const

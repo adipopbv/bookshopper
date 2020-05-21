@@ -39,6 +39,24 @@ void GraphicalBookstoreClient::InitButtons()
 	QObject::connect(this->mainMenu->cartAddRandomButton.get(), &QPushButton::clicked, [this] () { this->mainMenu->Hide(); this->addRandomToCartMenu->Show(); });
 	QObject::connect(this->mainMenu->cartExportButton.get(), &QPushButton::clicked, [this] () { this->SaveCartToFile(); });
 	QObject::connect(this->mainMenu->cartTitlesButton.get(), &QPushButton::clicked, [this] () { this->ListAllCartTitles(); });
+	QObject::connect(this->mainMenu->cartReadOnlyButton.get(), &QPushButton::clicked, 
+			[this] () 
+			{
+				shared_ptr<CartReadOnlyWindow> window = make_shared<CartReadOnlyWindow>(this->bookstoreService);
+				window->Show();
+
+				this->cartReadOnlyWindows.push_back(window);
+			}
+	);
+	QObject::connect(this->mainMenu->cartReadWriteButton.get(), &QPushButton::clicked,
+			[this] () 
+			{
+				shared_ptr<CartReadWriteWindow> window = make_shared<CartReadWriteWindow>(this->bookstoreService);
+				window->Show();
+
+				this->cartReadWriteWindows.push_back(window);
+			}
+	);
 	// exit button
 	QObject::connect(this->mainMenu->exitAppButton.get(), &QPushButton::clicked, [this] () { this->ExitApplication(); });
 

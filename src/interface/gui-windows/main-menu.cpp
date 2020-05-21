@@ -110,6 +110,8 @@ void MainMenu::InitCartSide()
 	this->cartAddRandomButton = make_shared<QPushButton>(tr("Add random"));
 	this->cartExportButton = make_shared<QPushButton>(tr("Export"));
 	this->cartTitlesButton = make_shared<QPushButton>(tr("Titles"));
+	this->cartReadOnlyButton = make_shared<QPushButton>(tr("Open read only"));
+	this->cartReadWriteButton = make_shared<QPushButton>(tr("Open read/write"));
 
 	// adding widgets to layouts
 	
@@ -119,6 +121,8 @@ void MainMenu::InitCartSide()
 	this->cartActionsLayout->addWidget(this->cartAddRandomButton.get(), 2, 0, Qt::AlignCenter);
 	this->cartActionsLayout->addWidget(this->cartExportButton.get(), 2, 2, Qt::AlignCenter);
 	this->cartActionsLayout->addWidget(this->cartTitlesButton.get(), 4, 0, Qt::AlignCenter);
+	this->cartActionsLayout->addWidget(this->cartReadOnlyButton.get(), 6, 0, Qt::AlignCenter);
+	this->cartActionsLayout->addWidget(this->cartReadWriteButton.get(), 6, 2, Qt::AlignCenter);
 
 	// adding cart book list
 	this->cartSideLayout->addWidget(this->cartBooksList.get());

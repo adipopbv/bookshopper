@@ -56,7 +56,7 @@ class MainMenu: public QGroupBox
 		shared_ptr<QPushButton> exitAppButton;
 
 		/// Library buttons and cart buttons
-		shared_ptr<QPushButton> libraryAddButton, libraryModifyButton, libraryDeleteButton, librarySearchButton, libraryFilterButton, librarySortButton, libraryUndoButton, cartEmptyButton, cartAddButton, cartAddRandomButton, cartExportButton, cartTitlesButton;
+		shared_ptr<QPushButton> libraryAddButton, libraryModifyButton, libraryDeleteButton, librarySearchButton, libraryFilterButton, librarySortButton, libraryUndoButton, cartEmptyButton, cartAddButton, cartAddRandomButton, cartExportButton, cartTitlesButton, cartReadOnlyButton, cartReadWriteButton;
 
 		/// Constructor
 		MainMenu(shared_ptr<BookstoreService> const &service);

@@ -12,10 +12,11 @@
 #include "../domain/exceptions.h"
 #include "../domain/operations.h"
 #include "../infrastructure/repos.h"
+#include "../infrastructure/observers.h"
 
 class Operation;
 
-class BookstoreService
+class BookstoreService: public Observable
 {
 	private:
 		/// The books repository
@@ -33,6 +34,11 @@ class BookstoreService
 
 		/// Library service destructor
 		~BookstoreService();
+
+		/**
+		 * @brief Notifies all observers of changed state
+		 */
+		void Notify() override;
 
 		/// Books repository getter
 		std::shared_ptr<Repo<Book>> getBooksRepo() const 

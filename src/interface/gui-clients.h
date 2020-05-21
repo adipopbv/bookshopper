@@ -6,16 +6,17 @@
 #include <QObject>
 
 #include "./clients.h"
-#include "./gui-menus/add-menu.h"
-#include "./gui-menus/add-to-cart-menu.h"
-#include "./gui-menus/add-random-to-cart-menu.h"
-#include "./gui-menus/delete-menu.h"
-#include "./gui-menus/filter-menu.h"
-#include "./gui-menus/list-cart-titles-menu.h"
-#include "./gui-menus/main-menu.h"
-#include "./gui-menus/modify-menu.h"
-#include "./gui-menus/search-menu.h"
-#include "./gui-menus/sort-menu.h"
+#include "./gui-windows/add-menu.h"
+#include "./gui-windows/add-to-cart-menu.h"
+#include "./gui-windows/add-random-to-cart-menu.h"
+#include "./gui-windows/delete-menu.h"
+#include "./gui-windows/filter-menu.h"
+#include "./gui-windows/list-cart-titles-menu.h"
+#include "./gui-windows/main-menu.h"
+#include "./gui-windows/modify-menu.h"
+#include "./gui-windows/search-menu.h"
+#include "./gui-windows/sort-menu.h"
+#include "./gui-windows/cart-windows.h"
 
 using std::shared_ptr;
 using std::make_shared;
@@ -43,6 +44,9 @@ class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 		shared_ptr<AddRandomToCartMenu> addRandomToCartMenu;
 		/// List cart titles menu
 		shared_ptr<ListCartTitlesMenu> listCartTitlesMenu;
+		/// Cart windows
+		vector<shared_ptr<CartReadOnlyWindow>> cartReadOnlyWindows;
+		vector<shared_ptr<CartReadWriteWindow>> cartReadWriteWindows;
 
 		/// Buttons init
 		void InitButtons();
