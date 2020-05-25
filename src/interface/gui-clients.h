@@ -80,6 +80,8 @@ class GraphicalBookstoreClient: public BookstoreClient, public QApplication
 
 		/// Adds random books to the cart
 		void AddRandomBooksToCart() override;
+		void AddRandomBooksToCart2(shared_ptr<CartReadWriteWindow> const &window);
+
 
 		/// Saves the cart to csv file
 		void SaveCartToFile() override;

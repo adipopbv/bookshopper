@@ -4,6 +4,11 @@
 #include <QGroupBox>
 #include <QPainter>
 #include <random>
+#include <QHBoxLayout>
+#include <QListWidget>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QSpinBox>
 
 #include "../../infrastructure/observers.h"
 #include "../../domain/entities.h"
@@ -47,7 +52,15 @@ class CartReadWriteWindow: public QGroupBox, public Observer
 		/// Service reference
 		shared_ptr<BookstoreService> service;
 
+		shared_ptr<QHBoxLayout> windowLayout;
+		shared_ptr<QListWidget> booksList;
+		shared_ptr<QGroupBox> actions;
+		shared_ptr<QGridLayout> actionsLayout;
+
 	public:
+		shared_ptr<QPushButton> emptyButton, addRandomButton;
+		shared_ptr<QSpinBox> addRandomField;
+
 		/**
 		 * @brief CartReadWriteWindow constructor
 		 *

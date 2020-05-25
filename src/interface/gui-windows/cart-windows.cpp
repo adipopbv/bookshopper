@@ -46,26 +46,58 @@ void CartReadOnlyWindow::Hide()
 
 CartReadWriteWindow::CartReadWriteWindow(shared_ptr<BookstoreService> service)
 {
+	this->service = service;
+	service->AddObserver(this);
 
+	windowLayout = make_shared<QHBoxLayout>();
+	setLayout(windowLayout.get());
+
+	booksList = make_shared<QListWidget>();
+	windowLayout->addWidget(booksList.get());
+
+	actions = make_shared<QGroupBox>(tr("actions:"));
+	actionsLayout = make_shared<QGridLayout>();
+	actions->setLayout(actionsLayout.get());
+	windowLayout->addWidget(actions.get());
+
+	emptyButton = make_shared<QPushButton>(tr("Empty cart"));
+	actionsLayout->addWidget(emptyButton.get(), 0, 0, Qt::AlignCenter);
+	addRandomButton = make_shared<QPushButton>(tr("Add random"));
+	actionsLayout->addWidget(addRandomButton.get(), 2, 0, Qt::AlignCenter);
+	addRandomField = make_shared<QSpinBox>();
+	addRandomField->setMaximum(20);
+	actionsLayout->addWidget(addRandomField.get(), 2, 2, Qt::AlignCenter);
 }
 
 CartReadWriteWindow::~CartReadWriteWindow()
 {
-
+	service->RemoveObserver(this);
 }
 
 void CartReadWriteWindow::Update()
 {
-
+	ReloadList();
 }
 
 void CartReadWriteWindow::ReloadList()
 {
+	booksList->clear();
+	booksList->clearSelection();
 
+	std::vector<Book> cartBooks = this->service->getCart()->toVector();
+	for (Book const &book: cartBooks)
+	{
+		booksList->addItem(tr(("Title: " + book.getTitle() + 
+					"\n  Author: " + book.getAuthor() +
+					"\n  Genre: " + book.getGenre() +
+					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
+	}
 }
 
 void CartReadWriteWindow::Show()
 {
+	addRandomField->setValue(0);
+	ReloadList();
 	this->show();
 }
 

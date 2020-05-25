@@ -55,6 +55,9 @@ void GraphicalBookstoreClient::InitButtons()
 				window->Show();
 
 				this->cartReadWriteWindows.push_back(window);
+
+				QObject::connect(window->emptyButton.get(), &QPushButton::clicked, [this] () { this->EmptyCart(); });
+				QObject::connect(window->addRandomButton.get(), &QPushButton::clicked, [this] () { this->AddRandomBooksToCart2(this->cartReadWriteWindows[((int)cartReadWriteWindows.size()) - 1]); } );
 			}
 	);
 	// exit button
@@ -95,6 +98,7 @@ void GraphicalBookstoreClient::InitButtons()
 
 	// list cart titles menu buttons
 	QObject::connect(this->listCartTitlesMenu->okButton.get(), &QPushButton::clicked, [this] () { this->listCartTitlesMenu->Hide(); this->mainMenu->Show(); });
+
 }
 
 void GraphicalBookstoreClient::AddBook()
@@ -349,6 +353,15 @@ void GraphicalBookstoreClient::AddRandomBooksToCart()
 	QMessageBox succesMessage;
 	succesMessage.setText(tr("Operation succesful!"));
 	try { this->bookstoreService->AddRandomBooksToCart(this->addRandomToCartMenu->countField->text().toInt()); }
+	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
+	succesMessage.exec();
+}
+
+void GraphicalBookstoreClient::AddRandomBooksToCart2(shared_ptr<CartReadWriteWindow> const &window)
+{
+	QMessageBox succesMessage;
+	succesMessage.setText(tr("Operation succesful!"));
+	try { this->bookstoreService->AddRandomBooksToCart(window->addRandomField->text().toInt()); }
 	catch (AppException &e) { succesMessage.setText(tr(("Error:\n" + e.getMessage()).c_str())); }
 	succesMessage.exec();
 }
