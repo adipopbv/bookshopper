@@ -244,6 +244,8 @@ TEST(BookstoreService, SaveCartToFile)
 	BookstoreService service = BookstoreService();
 	service.AddBookToRepo("ce", "se", "intampla", 301);
 	service.AddBookToRepo("vai", "de", "noi", 2020);
+	service.AddToCart("ce");
+	service.AddToCart("vai");
 	std::string fileName = "test-file.csv";
 	service.SaveCartToFile(fileName);
 	std::ifstream fin(fileName);
