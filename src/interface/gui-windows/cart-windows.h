@@ -46,6 +46,18 @@ class CartReadOnlyWindow: public QGroupBox, public Observer
 		void Hide();
 };
 
+class BookListModel: public QAbstractListModel
+{
+	public:
+		vector<Book> books;
+
+		/// Gets data of item at index and with role
+		QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+		/// Gets row count
+		int rowCount(const QModelIndex &parent = QModelIndex()) const;
+};
+
 class CartReadWriteWindow: public QGroupBox, public Observer
 {
 	protected:
@@ -53,7 +65,10 @@ class CartReadWriteWindow: public QGroupBox, public Observer
 		shared_ptr<BookstoreService> service;
 
 		shared_ptr<QHBoxLayout> windowLayout;
-		shared_ptr<QListWidget> booksList;
+
+		shared_ptr<QListView> booksList;
+		shared_ptr<BookListModel> booksListModel;
+
 		shared_ptr<QGroupBox> actions;
 		shared_ptr<QGridLayout> actionsLayout;
 

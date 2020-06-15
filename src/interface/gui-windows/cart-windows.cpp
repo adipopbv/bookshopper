@@ -1,5 +1,4 @@
 #include "./cart-windows.h"
-#include <iostream>
 
 CartReadOnlyWindow::CartReadOnlyWindow(shared_ptr<BookstoreService> service)
 {
@@ -44,6 +43,25 @@ void CartReadOnlyWindow::Hide()
 	this->hide();
 }
 
+QVariant BookListModel::data(const QModelIndex &index, int role) const
+{
+	if (role == Qt::DisplayRole)
+	{
+		Book const &book = books[index.row()];
+		return QString(tr(("Title: " + book.getTitle() + 
+					"\n  Author: " + book.getAuthor() +
+					"\n  Genre: " + book.getGenre() +
+					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str()));
+	}
+
+	return QVariant();
+}
+
+int BookListModel::rowCount(const QModelIndex &parent) const
+{
+	return books.size();
+}
+
 CartReadWriteWindow::CartReadWriteWindow(shared_ptr<BookstoreService> service)
 {
 	this->service = service;
@@ -52,7 +70,9 @@ CartReadWriteWindow::CartReadWriteWindow(shared_ptr<BookstoreService> service)
 	windowLayout = make_shared<QHBoxLayout>();
 	setLayout(windowLayout.get());
 
-	booksList = make_shared<QListWidget>();
+	booksList = make_shared<QListView>();
+	booksListModel = make_shared<BookListModel>();
+	booksList->setModel(booksListModel.get());
 	windowLayout->addWidget(booksList.get());
 
 	actions = make_shared<QGroupBox>(tr("actions:"));
@@ -81,17 +101,9 @@ void CartReadWriteWindow::Update()
 
 void CartReadWriteWindow::ReloadList()
 {
-	booksList->clear();
-	booksList->clearSelection();
-
-	std::vector<Book> cartBooks = this->service->getCart()->toVector();
-	for (Book const &book: cartBooks)
-	{
-		booksList->addItem(tr(("Title: " + book.getTitle() + 
-					"\n  Author: " + book.getAuthor() +
-					"\n  Genre: " + book.getGenre() +
-					"\n  Release year: " + std::to_string(book.getReleaseYear())).c_str())); 
-	}
+	booksListModel = make_shared<BookListModel>();
+	booksListModel->books = service->getCart()->toVector();
+	booksList->setModel(booksListModel.get());
 }
 
 void CartReadWriteWindow::Show()
